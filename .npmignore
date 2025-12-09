@@ -7,3 +7,6 @@ eslint.config.js
 .vscode
 .idea
 node_modules
+src
+tsconfig.json
+*.tsbuildinfo

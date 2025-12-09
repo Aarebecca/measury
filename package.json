@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "description": "A lightweight library for estimating text width and height in non-browser environments",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
     "lib/**/*.js",
+    "lib/**/*.d.ts",
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint src/**/*.js",
-    "format": "prettier --write \"src/**/*.js\"",
-    "format:check": "prettier --check \"src/**/*.js\"",
+    "build": "tsc",
+    "prebuild": "rm -rf lib",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -29,8 +34,12 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^24.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
   }
 }
