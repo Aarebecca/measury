@@ -1,11 +1,10 @@
-import type { Metrics, TextStyle } from './types';
+import type { TextMetrics, TextStyle } from './types';
 
-export function measureText(text: string, style?: TextStyle): Metrics {
+export function measureText(text: string, style?: TextStyle): TextMetrics {
   return {
     // TODO: Implement text measurement logic
     width: 0,
     height: 0,
-    lines: 1,
-    lineHeight: 0,
+    baseline: 0,
   };
 }
