@@ -1,0 +1,22 @@
+/* 字体加载 */
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('./fonts/AlibabaPuHuiTi-3-55-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Han Sans';
+  src: url('./fonts/SourceHanSansCN-Regular.otf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Han Serif';
+  src: url('./fonts/SourceHanSerifCN-Regular.otf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

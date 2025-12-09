@@ -33,6 +33,8 @@ export interface TextMetrics {
 
 export interface FontData {
   fontFamily: string;
+  /** 字重 */
+  fontWeight: string | number;
   /** 归一化基准，如 1000 或 2048 */
   unitsPerEm: number;
 

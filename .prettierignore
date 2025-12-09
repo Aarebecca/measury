@@ -1,0 +1,11 @@
+# 依赖和构建产物
+node_modules
+lib
+dist
+coverage
+
+src/fonts/*.ts
+!src/fonts/index.ts
+
+# 测试产物
+.nyc_output
