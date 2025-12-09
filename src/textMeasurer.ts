@@ -85,7 +85,17 @@ export class TextMeasurer {
     if (!fontMetrics) {
       // Fallback to sans-serif if font not found
       const fallbackMetrics = this.fontConfig.getFont('sans-serif');
-      return this._calculateDimensions(text, fontSize, fallbackMetrics!);
+      if (!fallbackMetrics) {
+        // Ultimate fallback if even sans-serif is missing
+        const defaultMetrics: FontMetrics = {
+          avgCharWidth: 0.5,
+          avgCharHeight: 1.2,
+          spaceWidth: 0.3,
+          lineHeight: 1.2,
+        };
+        return this._calculateDimensions(text, fontSize, defaultMetrics);
+      }
+      return this._calculateDimensions(text, fontSize, fallbackMetrics);
     }
 
     return this._calculateDimensions(text, fontSize, fontMetrics);
