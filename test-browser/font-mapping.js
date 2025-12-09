@@ -22,6 +22,16 @@ const fontMapping = {
     varName: 'SourceHanSerif',
     fileName: 'SourceHanSerif',
     displayName: 'Source Han Serif (思源宋体)'
+  },
+  'LXGW WenKai': {
+    varName: 'LXGWWenKai',
+    fileName: 'LXGWWenKai',
+    displayName: 'LXGW WenKai (霞鹜文楷)'
+  },
+  '851tegakizatsu': {
+    varName: '_851tegakizatsu',
+    fileName: '851tegakizatsu',
+    displayName: '851tegakizatsu (851手写杂字)'
   }
 };
 

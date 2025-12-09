@@ -20,3 +20,17 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'LXGW WenKai';
+  src: url('./fonts/LXGWWenKai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: '851tegakizatsu';
+  src: url('./fonts/851tegakizatsu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

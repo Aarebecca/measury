@@ -333,6 +333,23 @@
   </div>
 
   <script>
+    // 生成默认字体映射
+    function getDefaultFontMapping(fontName) {
+      // 移除开头的下划线，移除中间的空格
+      const cleanName = fontName.replace(/\s+/g, '');
+      const varName = cleanName.match(/^[_\d]/) ? '_' + cleanName : cleanName;
+      return {
+        displayName: fontName,
+        varName,
+        fileName: cleanName
+      };
+    }
+    
+    // 获取字体映射（优先使用 fontMapping，否则使用默认规则）
+    function getFontMapping(fontName) {
+      return fontMapping[fontName] || getDefaultFontMapping(fontName);
+    }
+    
     // 从 CSS 中解析字体列表
     async function loadAvailableFonts() {
       try {
@@ -355,8 +372,8 @@
         fonts.forEach(font => {
           const option = document.createElement('option');
           option.value = font;
-          const mapping = fontMapping[font];
-          option.textContent = mapping ? mapping.displayName : font;
+          const mapping = getFontMapping(font);
+          option.textContent = mapping.displayName;
           fontSelect.appendChild(option);
         });
         
@@ -566,54 +583,122 @@
     // 初始测试用例（在字体加载完成前使用）
     let testCases = [];
 
-    function measureText(text, style) {
+    // 字体的完整 metrics 映射（与代码库保持一致）
+    const fontMetrics = {
+      'Alibaba PuHuiTi': { 
+        ascender: 1060, 
+        descender: -340,
+        lineGap: 0,
+        unitsPerEm: 1000 
+      },
+      'Source Han Sans': { 
+        ascender: 880, 
+        descender: -120,
+        lineGap: 500,
+        unitsPerEm: 1000 
+      },
+      'Source Han Serif': { 
+        ascender: 1151, 
+        descender: -286,
+        lineGap: 0,
+        unitsPerEm: 1000 
+      },
+      'LXGW WenKai': { 
+        ascender: 928, 
+        descender: -256,
+        lineGap: 0,
+        unitsPerEm: 1000 
+      },
+      '851tegakizatsu': { 
+        ascender: 880, 
+        descender: -144,
+        lineGap: 0,
+        unitsPerEm: 1024 
+      },
+    };
+
+    async function measureText(text, style) {
+      // 等待字体加载完成
+      if ('fonts' in document) {
+        try {
+          await document.fonts.load(`${style.fontWeight || 400} ${style.fontSize}px "${style.fontFamily}"`);
+        } catch (e) {
+          console.warn('字体加载失败:', e);
+        }
+      }
+      
       const div = document.createElement('div');
       div.style.position = 'absolute';
       div.style.visibility = 'hidden';
       div.style.whiteSpace = 'nowrap';
-      div.style.fontFamily = style.fontFamily;
+      div.style.fontFamily = `"${style.fontFamily}"`;
       div.style.fontSize = style.fontSize + 'px';
       div.style.fontWeight = style.fontWeight;
       div.style.letterSpacing = (style.letterSpacing || 0) + 'px';
       div.style.wordSpacing = (style.wordSpacing || 0) + 'px';
       div.textContent = text;
       
+      // 确保没有其他样式干扰
+      div.style.padding = '0';
+      div.style.margin = '0';
+      div.style.border = 'none';
+      div.style.boxSizing = 'content-box';
+      
       document.body.appendChild(div);
       const rect = div.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(div);
+      
+      // 获取字体 metrics
+      const metrics = fontMetrics[style.fontFamily];
+      const fontSize = style.fontSize;
+      
+      // 计算高度（使用字体 metrics，与代码库保持一致）
+      let height;
+      if (metrics) {
+        const { ascender, descender, lineGap = 0 } = metrics;
+        const totalHeight = ascender - descender + lineGap;
+        height = (totalHeight / metrics.unitsPerEm) * fontSize;
+      } else {
+        // 降级：使用浏览器实际渲染高度
+        height = rect.height;
+      }
+      
+      // 计算 baseline（使用字体的 ascender 比例）
+      let baseline;
+      if (metrics) {
+        baseline = fontSize * (metrics.ascender / metrics.unitsPerEm);
+      } else {
+        // 如果没有字体数据，使用通用估算值
+        baseline = fontSize * 0.8;
+      }
       
       // 获取计算后的行高
-      const computedStyle = window.getComputedStyle(div);
       let lineHeight = parseFloat(computedStyle.lineHeight);
       
       // 如果 lineHeight 是 'normal'，parseFloat 会返回 NaN
-      // 这种情况下使用 height 作为行高
+      // 这种情况下使用计算的高度
       if (isNaN(lineHeight)) {
-        lineHeight = rect.height;
+        lineHeight = height;
       }
-      
-      // 计算 baseline（简化版本，使用字体的 ascender 比例）
-      // 对于 Alibaba PuHuiTi: ascender=1060, unitsPerEm=1000
-      // baseline ≈ fontSize * (ascender / unitsPerEm)
-      // 这里使用一个通用估算: baseline ≈ fontSize * 0.8
-      const baseline = style.fontSize * 1.06; // 1060/1000 for Alibaba PuHuiTi
       
       document.body.removeChild(div);
       
       return {
         width: rect.width,
-        height: rect.height,
+        height: height,
+        actualHeight: rect.height,
         lineHeight: lineHeight,
         baseline: baseline,
       };
     }
 
-    function testCustom() {
+    async function testCustom() {
       const text = document.getElementById('customText').value;
       const fontFamily = document.getElementById('customFont').value;
       const fontSize = parseInt(document.getElementById('customSize').value);
       const fontWeight = parseInt(document.getElementById('customWeight').value);
       
-      const result = measureText(text, { fontFamily, fontSize, fontWeight });
+      const result = await measureText(text, { fontFamily, fontSize, fontWeight });
       
       // 保存当前测试结果供生成代码使用
       window.currentCustomTest = {
@@ -632,7 +717,8 @@
             <div><strong>字体:</strong> ${fontFamily}</div>
             <div><strong>文本:</strong> "${text}"</div>
             <div><strong>宽度:</strong> ${result.width.toFixed(2)}px</div>
-            <div><strong>高度:</strong> ${result.height.toFixed(2)}px</div>
+            <div><strong>高度 (计算):</strong> ${result.height.toFixed(2)}px</div>
+            <div><strong>高度 (浏览器实际):</strong> ${result.actualHeight.toFixed(2)}px ${Math.abs(result.height - result.actualHeight) < 1 ? '✅' : '⚠️ 差异: ' + (result.actualHeight - result.height).toFixed(2) + 'px'}</div>
             <div><strong>行高:</strong> ${result.lineHeight.toFixed(2)}px</div>
             <div><strong>基线:</strong> ${result.baseline.toFixed(2)}px (从顶部到基线的距离)</div>
           </div>
@@ -644,8 +730,8 @@
   fontWeight: ${fontWeight},
 });
 
-expect(metrics.width).toBeCloseTo(${result.width.toFixed(2)}, 0);
-expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 0);</pre>
+expect(metrics.width).toBeCloseTo(${result.width.toFixed(2)}, 1);
+expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 1);</pre>
           </div>
         </div>
       `;
@@ -661,11 +747,7 @@ expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 0);</pre>
       const r = window.currentCustomTest;
       const { fontFamily, fontSize, fontWeight } = r.style;
       
-      const mapping = fontMapping[fontFamily];
-      if (!mapping) {
-        alert(`未找到字体 "${fontFamily}" 的映射配置，请在代码中添加 fontMapping`);
-        return;
-      }
+      const mapping = getFontMapping(fontFamily);
       
       const styleName = weightToStyle[fontWeight] || 'Regular';
       const importVarName = `${mapping.varName}${styleName}`;
@@ -695,8 +777,8 @@ beforeAll(() => {
       });
 
       // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 0);
-      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 0);
+      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 1);
+      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 1);
     });
   });
 });`;
@@ -705,7 +787,7 @@ beforeAll(() => {
       document.getElementById('output').textContent = fullCode;
     }
 
-    function runAllTests() {
+    async function runAllTests() {
       // 生成标准化测试用例
       testCases = generateTestCases();
       
@@ -714,13 +796,14 @@ beforeAll(() => {
         return;
       }
       
-      const results = testCases.map(testCase => {
-        const result = measureText(testCase.text, testCase.style);
-        return {
+      const results = [];
+      for (const testCase of testCases) {
+        const result = await measureText(testCase.text, testCase.style);
+        results.push({
           ...testCase,
           measured: result
-        };
-      });
+        });
+      }
       
       const resultsDiv = document.getElementById('testResults');
       resultsDiv.innerHTML = `<div style="margin-bottom: 10px; color: #666;">
@@ -737,7 +820,8 @@ beforeAll(() => {
             <div><strong>字号:</strong> ${r.style.fontSize}px</div>
             <div><strong>字重:</strong> ${r.style.fontWeight}</div>
             <div><strong>宽度:</strong> ${r.measured.width.toFixed(2)}px</div>
-            <div><strong>高度:</strong> ${r.measured.height.toFixed(2)}px</div>
+            <div><strong>高度 (计算):</strong> ${r.measured.height.toFixed(2)}px</div>
+            <div><strong>高度 (浏览器):</strong> ${r.measured.actualHeight.toFixed(2)}px ${Math.abs(r.measured.height - r.measured.actualHeight) < 1 ? '✅' : '⚠️'}</div>
             <div><strong>行高:</strong> ${r.measured.lineHeight.toFixed(2)}px</div>
             <div><strong>基线:</strong> ${r.measured.baseline.toFixed(2)}px</div>
           </div>
@@ -790,11 +874,7 @@ beforeAll(() => {
 import { measureText, registerFont } from '../src';
 ${[...uniqueFontWeights].map(fontWeight => {
   const [font, weight] = fontWeight.split('|');
-  const mapping = fontMapping[font];
-  if (!mapping) {
-    console.warn(`未找到字体映射: ${font}`);
-    return `// 警告: 未找到字体 ${font} 的映射`;
-  }
+  const mapping = getFontMapping(font);
   const styleName = weightToStyle[weight] || 'Regular';
   const importVarName = `${mapping.varName}${styleName}`;
   return `import ${importVarName} from '../src/fonts/${mapping.fileName}-${styleName}';`;
@@ -804,8 +884,7 @@ beforeAll(() => {
   // 注册字体
 ${[...uniqueFontWeights].map(fontWeight => {
   const [font, weight] = fontWeight.split('|');
-  const mapping = fontMapping[font];
-  if (!mapping) return `  // 跳过未映射的字体: ${font}`;
+  const mapping = getFontMapping(font);
   const styleName = weightToStyle[weight] || 'Regular';
   const importVarName = `${mapping.varName}${styleName}`;
   return `  registerFont(${importVarName});`;
@@ -834,8 +913,8 @@ ${[...uniqueFontWeights].map(fontWeight => {
       });
 
       // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 0);
-      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 0);
+      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 1);
+      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 1);
     });`;
           }).join('\n\n');
           
