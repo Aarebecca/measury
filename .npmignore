@@ -1,0 +1,9 @@
+example.js
+.eslintrc.js
+eslint.config.js
+.prettierrc
+.gitignore
+.git
+.vscode
+.idea
+node_modules

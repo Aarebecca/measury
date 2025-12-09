@@ -1,0 +1,36 @@
+{
+  "name": "text-width",
+  "version": "0.1.0",
+  "description": "A lightweight library for estimating text width and height in non-browser environments",
+  "main": "lib/index.js",
+  "files": [
+    "lib/**/*.js",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write \"src/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "text",
+    "width",
+    "height",
+    "measure",
+    "font",
+    "typography",
+    "text-metrics"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aarebecca/text-width.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.4"
+  }
+}
