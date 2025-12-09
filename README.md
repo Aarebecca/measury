@@ -225,7 +225,7 @@ npm run test:coverage
 验证测量准确性：
 
 ```bash
-npm run test:browser
+npm run dev
 # 访问 http://localhost:8090
 ```
 
