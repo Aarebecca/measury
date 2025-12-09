@@ -1,8 +1,24 @@
 /**
+ * Font metrics interface
+ */
+export interface FontMetrics {
+  /** Average character width ratio */
+  avgCharWidth: number;
+  /** Average character height ratio */
+  avgCharHeight: number;
+  /** Space character width ratio */
+  spaceWidth: number;
+  /** Line height ratio */
+  lineHeight: number;
+}
+
+/**
  * Font configuration storage
  * Stores average character widths and metrics for supported fonts
  */
-class FontConfig {
+export class FontConfig {
+  private fonts: Map<string, FontMetrics>;
+
   constructor() {
     this.fonts = new Map();
     this._initializeDefaultFonts();
@@ -12,7 +28,7 @@ class FontConfig {
    * Initialize with some default font metrics
    * These are approximate values based on common font characteristics
    */
-  _initializeDefaultFonts() {
+  private _initializeDefaultFonts(): void {
     // Default monospace font metrics
     this.addFont('monospace', {
       avgCharWidth: 0.6, // ratio of character width to font size
@@ -64,50 +80,46 @@ class FontConfig {
 
   /**
    * Add or update font metrics
-   * @param {string} fontFamily - Font family name
-   * @param {Object} metrics - Font metrics object
-   * @param {number} metrics.avgCharWidth - Average character width ratio
-   * @param {number} metrics.avgCharHeight - Average character height ratio
-   * @param {number} metrics.spaceWidth - Space character width ratio
-   * @param {number} metrics.lineHeight - Line height ratio
+   * @param fontFamily - Font family name
+   * @param metrics - Font metrics object
    */
-  addFont(fontFamily, metrics) {
+  addFont(fontFamily: string, metrics: FontMetrics): void {
     this.fonts.set(fontFamily.toLowerCase(), metrics);
   }
 
   /**
    * Get font metrics for a given font family
-   * @param {string} fontFamily - Font family name
-   * @returns {Object|null} Font metrics or null if not found
+   * @param fontFamily - Font family name
+   * @returns Font metrics or null if not found
    */
-  getFont(fontFamily) {
+  getFont(fontFamily: string): FontMetrics | null {
     return this.fonts.get(fontFamily.toLowerCase()) || null;
   }
 
   /**
    * Check if a font is configured
-   * @param {string} fontFamily - Font family name
-   * @returns {boolean}
+   * @param fontFamily - Font family name
+   * @returns True if font exists
    */
-  hasFont(fontFamily) {
+  hasFont(fontFamily: string): boolean {
     return this.fonts.has(fontFamily.toLowerCase());
   }
 
   /**
    * Remove a font from configuration
-   * @param {string} fontFamily - Font family name
+   * @param fontFamily - Font family name
    */
-  removeFont(fontFamily) {
+  removeFont(fontFamily: string): void {
     this.fonts.delete(fontFamily.toLowerCase());
   }
 
   /**
    * Get all configured fonts
-   * @returns {Array<string>}
+   * @returns Array of font family names
    */
-  getAllFonts() {
+  getAllFonts(): string[] {
     return Array.from(this.fonts.keys());
   }
 }
 
-module.exports = FontConfig;
+export default FontConfig;
