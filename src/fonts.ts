@@ -89,6 +89,32 @@ export function registerFont(data: FontData): void {
   const family = data.fontFamily;
   const normalizedWeight = normalizeWeight(data.fontWeight);
 
+  // 如果使用了 glyphsByWidth 压缩格式，需要展开到 glyphs
+  if (data.glyphsByWidth) {
+    const expandedGlyphs: Record<string, number> = { ...(data.glyphs || {}) };
+    
+    for (const [widthOrChar, valueOrWidth] of Object.entries(data.glyphsByWidth)) {
+      if (typeof valueOrWidth === 'string') {
+        // 这是压缩格式：width -> characters string
+        const width = Number(widthOrChar);
+        for (const char of valueOrWidth) {
+          expandedGlyphs[char] = width;
+        }
+      } else {
+        // 这是单个字符映射：char -> width (向后兼容)
+        expandedGlyphs[widthOrChar] = valueOrWidth;
+      }
+    }
+    
+    // 创建新的 fontData 对象，用展开后的 glyphs 替换原来的
+    data = {
+      ...data,
+      glyphs: expandedGlyphs,
+      // 移除 glyphsByWidth，节省运行时内存
+      glyphsByWidth: undefined,
+    };
+  }
+
   if (!fontRegistry.has(family)) {
     fontRegistry.set(family, new Map());
   }

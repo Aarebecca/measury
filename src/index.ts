@@ -80,7 +80,7 @@ export function measureText(text: string, style: TextStyle = {}): TextMetrics {
     const nextChar = i < chars.length - 1 ? chars[i + 1] : undefined;
 
     // 获取字符的 advance width
-    let advance = fontData.glyphs[char];
+    let advance = fontData.glyphs?.[char];
     if (advance === undefined) {
       advance = fontData.defaultWidth || fontData.unitsPerEm / 2;
     }

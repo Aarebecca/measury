@@ -49,12 +49,16 @@ export interface FontData {
   };
 
   /** 字形表 */
-  glyphs: {
+  glyphs?: {
     /** 直接存 xadv 数值 */
     [char: string]: number;
   };
   /** 如果字符在 glyphs 中找不到，且不满足特殊规则时，使用此宽度 */
   defaultWidth?: number;
+  /** 按宽度分组的字符串，用于压缩存储（运行时会转换为 glyphs） */
+  glyphsByWidth?: {
+    [width: number]: string;
+  };
 
   /** 可选：字距调整 */
   kerning?: { [pair: string]: number };
