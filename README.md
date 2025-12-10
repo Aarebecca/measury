@@ -128,7 +128,7 @@ npm run extract <字体文件路径.ttf>
 ```
 
 这将：
-1. 从 TTF 文件提取字体数据
+1. 从 TTF/OFT 文件提取字体数据
 2. 在 `src/fonts/` 生成 TypeScript 文件
 3. 自动添加到 `src/fonts/index.ts`
 

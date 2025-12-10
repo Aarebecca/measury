@@ -9,10 +9,6 @@
       "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
     },
-    "./fonts": {
-      "types": "./lib/fonts/index.d.ts",
-      "default": "./lib/fonts/index.js"
-    },
     "./*": {
       "types": "./lib/fonts/*.d.ts",
       "default": "./lib/fonts/*.js"
@@ -20,8 +16,7 @@
   },
   "sideEffects": false,
   "files": [
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
+    "lib",
     "README.md"
   ],
   "scripts": {
@@ -46,7 +41,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Aarebecca/measury.git"
+    "url": "git+https://github.com/Aarebecca/measury.git"
   },
   "author": "",
   "license": "MIT",
