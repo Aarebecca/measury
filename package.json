@@ -29,8 +29,6 @@
     "build": "tsc",
     "prebuild": "rm -rf lib",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
     "prepublishOnly": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
