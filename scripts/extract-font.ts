@@ -30,8 +30,69 @@ interface ExtractOptions {
   charset?: string;
   /** 提取的字体名称（内部使用） */
   extractedFontFamily?: string;
+  /** 是否只提取常用 Unicode 区块（默认 true） */
+  useCommonBlocksOnly?: boolean;
 }
 
+/**
+ * 常用 Unicode 区块定义
+ */
+const COMMON_UNICODE_BLOCKS = [
+  // 基础拉丁文
+  { start: 0x0020, end: 0x007E, name: 'Basic Latin' },
+  { start: 0x00A0, end: 0x00FF, name: 'Latin-1 Supplement' },
+  { start: 0x0100, end: 0x017F, name: 'Latin Extended-A' },
+  { start: 0x0180, end: 0x024F, name: 'Latin Extended-B' },
+  
+  // 希腊文和数学符号
+  { start: 0x0370, end: 0x03FF, name: 'Greek and Coptic' },
+  { start: 0x2190, end: 0x21FF, name: 'Arrows' },
+  { start: 0x2200, end: 0x22FF, name: 'Mathematical Operators' },
+  
+  // 通用标点和符号
+  { start: 0x2000, end: 0x206F, name: 'General Punctuation' },
+  { start: 0x2070, end: 0x209F, name: 'Superscripts and Subscripts' },
+  { start: 0x20A0, end: 0x20CF, name: 'Currency Symbols' },
+  { start: 0x2100, end: 0x214F, name: 'Letterlike Symbols' },
+  { start: 0x2150, end: 0x218F, name: 'Number Forms' },
+  { start: 0x2300, end: 0x23FF, name: 'Miscellaneous Technical' },
+  { start: 0x2460, end: 0x24FF, name: 'Enclosed Alphanumerics' },
+  { start: 0x2500, end: 0x257F, name: 'Box Drawing' },
+  { start: 0x2580, end: 0x259F, name: 'Block Elements' },
+  { start: 0x25A0, end: 0x25FF, name: 'Geometric Shapes' },
+  { start: 0x2600, end: 0x26FF, name: 'Miscellaneous Symbols' },
+  { start: 0x2700, end: 0x27BF, name: 'Dingbats' },
+  
+  // 中日韩符号和标点
+  { start: 0x3000, end: 0x303F, name: 'CJK Symbols and Punctuation' },
+  { start: 0x3040, end: 0x309F, name: 'Hiragana' },
+  { start: 0x30A0, end: 0x30FF, name: 'Katakana' },
+  { start: 0x3100, end: 0x312F, name: 'Bopomofo' },
+  { start: 0x3130, end: 0x318F, name: 'Hangul Compatibility Jamo' },
+  { start: 0x31A0, end: 0x31BF, name: 'Bopomofo Extended' },
+  { start: 0x31F0, end: 0x31FF, name: 'Katakana Phonetic Extensions' },
+  
+  // 中日韩统一表意文字
+  { start: 0x4E00, end: 0x9FFF, name: 'CJK Unified Ideographs' },
+  
+  // 韩文
+  { start: 0xAC00, end: 0xD7AF, name: 'Hangul Syllables' },
+  
+  // 全角字符
+  { start: 0xFF00, end: 0xFFEF, name: 'Halfwidth and Fullwidth Forms' },
+  
+  // Emoji (基础)
+  { start: 0x1F300, end: 0x1F5FF, name: 'Miscellaneous Symbols and Pictographs' },
+  { start: 0x1F600, end: 0x1F64F, name: 'Emoticons' },
+  { start: 0x1F680, end: 0x1F6FF, name: 'Transport and Map Symbols' },
+  { start: 0x1F900, end: 0x1F9FF, name: 'Supplemental Symbols and Pictographs' },
+];
+
+/**
+ * 将字符列表转换为优化的 Unicode 范围
+ * @param charsByWidth 按宽度分组的字符映射
+ * @param minRangeSize 最小范围大小（默认 10），小于此值的范围将被拆分为单个字符
+ */
 /**
  * 从 TTF 文件中提取字体数据
  */
@@ -65,8 +126,15 @@ function extractFontData(options: ExtractOptions): { code: string; warning: stri
   // 提取字形宽度
   const glyphs: Record<string, number> = {};
   const charSet = charset ? new Set(Array.from(charset)) : null;
+  const useCommonBlocksOnly = options.useCommonBlocksOnly !== false; // 默认 true
 
   console.log(`Extracting glyphs (total: ${font.glyphs.length})...`);
+  if (useCommonBlocksOnly) {
+    console.log('Filter mode: Common Unicode blocks only');
+  }
+  
+  let filteredCount = 0;
+  
   // 遍历字形
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs.get(i);
@@ -77,29 +145,71 @@ function extractFontData(options: ExtractOptions): { code: string; warning: stri
     // 如果指定了字符集，只提取字符集中的字符
     if (charSet && !charSet.has(char)) continue;
 
+    // 如果启用了常用区块过滤，检查字符是否在常用区块中
+    if (useCommonBlocksOnly && glyph.unicode !== undefined) {
+      const inCommonBlock = COMMON_UNICODE_BLOCKS.some(
+        block => glyph.unicode! >= block.start && glyph.unicode! <= block.end
+      );
+      
+      if (!inCommonBlock) {
+        filteredCount++;
+        continue;
+      }
+    }
+
     // 获取 advance width
     const advanceWidth = glyph.advanceWidth || 0;
     glyphs[char] = advanceWidth;
   }
   console.log(`✓ Extracted ${Object.keys(glyphs).length} glyphs`);
+  if (filteredCount > 0) {
+    console.log(`✓ Filtered ${filteredCount} rare/combining characters`);
+  }
 
-  // 优化：找出最常见的宽度作为 defaultWidth，并移除这些字符
+  // 优化：找出高频宽度并移除这些字符
   const widthCounts = new Map<number, number>();
   Object.values(glyphs).forEach((width) => {
     widthCounts.set(width, (widthCounts.get(width) || 0) + 1);
   });
 
-  // 找出出现次数最多的宽度
-  let defaultWidth = 0;
-  let maxCount = 0;
-  widthCounts.forEach((count, width) => {
-    if (count > maxCount) {
-      maxCount = count;
-      defaultWidth = width;
-    }
-  });
+  // 将宽度按出现次数排序
+  const sortedWidths = Array.from(widthCounts.entries())
+    .sort((a, b) => b[1] - a[1]);
 
-  // 移除使用默认宽度的字符（保留特殊字符和常用字符）
+  // 找出高频宽度（出现次数超过总字符数的 5% 的宽度）
+  const totalGlyphs = Object.keys(glyphs).length;
+  const threshold = Math.max(Math.floor(totalGlyphs * 0.05), 100); // 至少100个字符
+  
+  // 最常见的作为 defaultWidth
+  const defaultWidth = sortedWidths[0]?.[0] || 0;
+  const defaultWidthCount = sortedWidths[0]?.[1] || 0;
+  
+  // 其他高频宽度
+  const commonWidths: number[] = [];
+  const commonWidthsSet = new Set<number>();
+  
+  for (let i = 1; i < sortedWidths.length; i++) {
+    const [width, count] = sortedWidths[i];
+    if (count >= threshold) {
+      commonWidths.push(width);
+      commonWidthsSet.add(width);
+    } else {
+      break; // 后面的宽度出现次数更少，不需要再检查
+    }
+  }
+
+  console.log('✓ Width distribution analysis:');
+  console.log(`  Total glyphs: ${totalGlyphs}`);
+  console.log(`  Default width: ${defaultWidth} (${defaultWidthCount} glyphs, ${(defaultWidthCount / totalGlyphs * 100).toFixed(1)}%)`);
+  if (commonWidths.length > 0) {
+    console.log(`  Common widths (threshold: ${threshold} glyphs):`);
+    commonWidths.forEach((width, index) => {
+      const count = widthCounts.get(width) || 0;
+      console.log(`    ${index + 1}. ${width} (${count} glyphs, ${(count / totalGlyphs * 100).toFixed(1)}%)`);
+    });
+  }
+
+  // 移除使用高频宽度的字符（保留特殊字符和常用字符）
   const commonChars = new Set([
     ...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
     ...' .,!?;:\'"()[]{}/-+*=<>@#$%^&_`~|\\',
@@ -107,19 +217,33 @@ function extractFontData(options: ExtractOptions): { code: string; warning: stri
 
   const optimizedGlyphs: Record<string, number> = {};
   let removedCount = 0;
+  const removedByWidth = new Map<number, number>();
+  
+  // 收集每个高频宽度对应的字符（用于生成 Unicode 范围）
+  const charsByWidth = new Map<number, string[]>();
+  commonWidths.forEach(width => charsByWidth.set(width, []));
 
   Object.entries(glyphs).forEach(([char, width]) => {
-    // 保留常用字符或宽度与默认值不同的字符
-    if (commonChars.has(char) || width !== defaultWidth) {
+    // 保留常用字符，或者宽度不是高频宽度的字符
+    const isHighFrequencyWidth = width === defaultWidth || commonWidthsSet.has(width);
+    if (commonChars.has(char) || !isHighFrequencyWidth) {
       optimizedGlyphs[char] = width;
     } else {
       removedCount++;
+      removedByWidth.set(width, (removedByWidth.get(width) || 0) + 1);
+      
+      // 如果是 commonWidths 中的宽度（非 defaultWidth），收集字符
+      if (commonWidthsSet.has(width)) {
+        charsByWidth.get(width)!.push(char);
+      }
     }
   });
 
-  console.log(
-    `✓ Optimized: removed ${removedCount} glyphs with default width (${defaultWidth})`
-  );
+  console.log('✓ Optimization result:');
+  console.log(`  Removed ${removedCount} glyphs with high-frequency widths`);
+  removedByWidth.forEach((count, width) => {
+    console.log(`    - Width ${width}: ${count} glyphs removed`);
+  });
   console.log(`  Remaining glyphs: ${Object.keys(optimizedGlyphs).length}`);
 
   // 检查关键字符是否缺失（特别是空格）
@@ -287,20 +411,61 @@ function generateTypeScriptCode(data: {
   lines.push(`    descender: ${metrics.descender},`);
   lines.push(`    lineGap: ${metrics.lineGap},`);
   lines.push('  },');
-  lines.push('  glyphs: {');
 
-  // 输出字形数据（按字符代码排序）
-  const sortedChars = Object.keys(glyphs).sort((a, b) => {
-    return a.codePointAt(0)! - b.codePointAt(0)!;
+  // 分析字符分布，按宽度分组
+  const widthGroups = new Map<number, string[]>();
+  Object.entries(glyphs).forEach(([char, width]) => {
+    if (!widthGroups.has(width)) {
+      widthGroups.set(width, []);
+    }
+    widthGroups.get(width)!.push(char);
   });
 
-  for (const char of sortedChars) {
-    const advance = glyphs[char];
-    const escapedChar = escapeChar(char);
-    lines.push(`    '${escapedChar}': ${advance},`);
+  // 分离压缩格式和普通格式的字符
+  const compressedWidths = new Map<number, string>(); // width -> char string
+  const normalGlyphs: Record<string, number> = {}; // char -> width
+
+  const sortedWidths = Array.from(widthGroups.keys()).sort((a, b) => a - b);
+  for (const width of sortedWidths) {
+    const chars = widthGroups.get(width)!;
+    
+    if (chars.length >= 10) {
+      // 字符数量 >= 10，使用压缩格式
+      const sortedChars = chars.sort((a, b) => a.codePointAt(0)! - b.codePointAt(0)!);
+      const charString = sortedChars.map(escapeChar).join('');
+      compressedWidths.set(width, charString);
+    } else {
+      // 字符数量 < 10，使用普通格式
+      for (const char of chars) {
+        normalGlyphs[char] = width;
+      }
+    }
   }
 
-  lines.push('  },');
+  // 输出 glyphs（如果有普通格式的字符）
+  if (Object.keys(normalGlyphs).length > 0) {
+    lines.push('  glyphs: {');
+    const sortedChars = Object.keys(normalGlyphs).sort((a, b) => {
+      return a.codePointAt(0)! - b.codePointAt(0)!;
+    });
+    for (const char of sortedChars) {
+      const width = normalGlyphs[char];
+      const escapedChar = escapeChar(char);
+      lines.push(`    '${escapedChar}': ${width},`);
+    }
+    lines.push('  },');
+  }
+
+  // 输出 glyphsByWidth（如果有压缩格式的字符）
+  if (compressedWidths.size > 0) {
+    lines.push('  glyphsByWidth: {');
+    const sortedCompressedWidths = Array.from(compressedWidths.keys()).sort((a, b) => a - b);
+    for (const width of sortedCompressedWidths) {
+      const charString = compressedWidths.get(width)!;
+      lines.push(`    ${width}: '${charString}',`);
+    }
+    lines.push('  },');
+  }
 
   // 输出 defaultWidth
   if (defaultWidth !== undefined && defaultWidth !== 0) {
@@ -329,6 +494,9 @@ function generateTypeScriptCode(data: {
  * 转义特殊字符
  */
 function escapeChar(char: string): string {
+  const code = char.charCodeAt(0);
+  
+  // 处理常见转义字符
   switch (char) {
   case '\'':
     return '\\\'';
@@ -340,9 +508,22 @@ function escapeChar(char: string): string {
     return '\\r';
   case '\t':
     return '\\t';
-  default:
-    return char;
   }
+  
+  // 处理 Unicode 行分隔符和段落分隔符
+  // Line Separator (LS): U+2028
+  // Paragraph Separator (PS): U+2029
+  // Next Line (NEL): U+0085
+  if (code === 0x2028 || code === 0x2029 || code === 0x0085) {
+    return `\\u${code.toString(16).toUpperCase().padStart(4, '0')}`;
+  }
+  
+  // 其他控制字符也转义
+  if (code < 0x20 || (code >= 0x7F && code <= 0x9F)) {
+    return `\\u${code.toString(16).toUpperCase().padStart(4, '0')}`;
+  }
+  
+  return char;
 }
 
 /**
@@ -395,7 +576,7 @@ function generateFileName(fontFamily: string, fontWeight: string | number): stri
 function main() {
   const argv = minimist(process.argv.slice(2), {
     string: ['weight', 'family', 'charset', 'output'],
-    boolean: ['no-kerning', 'help'],
+    boolean: ['no-kerning', 'no-common-blocks', 'help'],
     alias: {
       w: 'weight',
       f: 'family',
@@ -409,12 +590,13 @@ function main() {
     console.log('Usage: npm run extract <ttf-file> [options]');
     console.log('');
     console.log('Options:');
-    console.log('  -w, --weight <weight>      Set font weight (e.g., 400, bold)');
-    console.log('  -f, --family <name>        Override font family name');
-    console.log('  -c, --charset <chars>      Only extract specified characters');
-    console.log('  -o, --output <file>        Output file path');
-    console.log('  --no-kerning               Skip kerning data extraction');
-    console.log('  -h, --help                 Show this help message');
+    console.log('  -w, --weight <weight>         Set font weight (e.g., 400, bold)');
+    console.log('  -f, --family <name>           Override font family name');
+    console.log('  -c, --charset <chars>         Only extract specified characters');
+    console.log('  -o, --output <file>           Output file path');
+    console.log('  --no-kerning                  Skip kerning data extraction');
+    console.log('  --no-common-blocks            Extract all Unicode blocks (not recommended)');
+    console.log('  -h, --help                    Show this help message');
     console.log('');
     console.log('Examples:');
     console.log('  npm run extract fonts/Roboto-Regular.ttf');
@@ -433,6 +615,7 @@ function main() {
     fontWeight: argv.weight ? (isNaN(Number(argv.weight)) ? argv.weight : Number(argv.weight)) : 400,
     charset: argv.charset,
     includeKerning: !argv['no-kerning'],
+    useCommonBlocksOnly: !argv['no-common-blocks'],
   };
 
   // 检查输入文件是否存在
