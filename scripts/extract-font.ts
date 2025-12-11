@@ -24,6 +24,8 @@ interface ExtractOptions {
   fontFamily?: string;
   /** 字重 */
   fontWeight?: string | number;
+  /** 字体样式 */
+  fontStyle?: 'normal' | 'italic' | 'oblique';
   /** 是否提取 kerning 数据（可能会增加文件大小） */
   includeKerning?: boolean;
   /** 要提取的字符集（如果不指定，则提取所有字形） */
@@ -361,6 +363,7 @@ ${measureCode}
     defaultWidth,
     kerning,
     fontWeight: options.fontWeight || 400,
+    fontStyle: options.fontStyle || 'normal',
   });
 
   return { code, warning: missingCharsWarning };
@@ -381,6 +384,7 @@ function generateTypeScriptCode(data: {
   defaultWidth?: number;
   kerning?: Record<string, number>;
   fontWeight: string | number;
+  fontStyle: 'normal' | 'italic' | 'oblique';
 }): string {
   const {
     fontFamily,
@@ -390,6 +394,7 @@ function generateTypeScriptCode(data: {
     defaultWidth,
     kerning,
     fontWeight,
+    fontStyle,
   } = data;
 
   const lines: string[] = [];
@@ -401,10 +406,14 @@ function generateTypeScriptCode(data: {
   if (fontWeight) {
     lines.push(` * Font Weight: ${fontWeight}`);
   }
+  if (fontStyle && fontStyle !== 'normal') {
+    lines.push(` * Font Style: ${fontStyle}`);
+  }
   lines.push(' */');
   lines.push('export default {');
   lines.push(`  fontFamily: '${fontFamily}',`);
   lines.push(`  fontWeight: ${typeof fontWeight === 'number' ? fontWeight : `'${fontWeight}'`},`);
+  lines.push(`  fontStyle: '${fontStyle}',`);
   lines.push(`  unitsPerEm: ${unitsPerEm},`);
   lines.push('  metrics: {');
   lines.push(`    ascender: ${metrics.ascender},`);
@@ -551,23 +560,34 @@ function weightToString(weight: string | number): string {
 }
 
 /**
+ * 字体样式转字符串（用于文件名）
+ */
+function styleToString(style?: 'normal' | 'italic' | 'oblique'): string {
+  if (!style || style === 'normal') return '';
+  return style.charAt(0).toUpperCase() + style.slice(1);
+}
+
+/**
  * 生成导出名称（用于 index.ts）
  */
-function generateExportName(fontFamily: string, fontWeight: string | number): string {
+function generateExportName(fontFamily: string, fontWeight: string | number, fontStyle?: 'normal' | 'italic' | 'oblique'): string {
   const weightStr = weightToString(fontWeight);
+  const styleStr = styleToString(fontStyle);
   // 移除空格和特殊字符
   const familyName = fontFamily.replace(/\s+/g, '');
-  return `${familyName}${weightStr}`;
+  return `${familyName}${weightStr}${styleStr}`;
 }
 
 /**
  * 生成文件名
  */
-function generateFileName(fontFamily: string, fontWeight: string | number): string {
+function generateFileName(fontFamily: string, fontWeight: string | number, fontStyle?: 'normal' | 'italic' | 'oblique'): string {
   const weightStr = weightToString(fontWeight);
+  const styleStr = styleToString(fontStyle);
   // 移除空格，保留连字符
   const familyName = fontFamily.replace(/\s+/g, '');
-  return `${familyName}-${weightStr}`;
+  const suffix = styleStr ? `-${styleStr}` : '';
+  return `${familyName}-${weightStr}${suffix}`;
 }
 
 /**
@@ -591,6 +611,7 @@ function main() {
     console.log('');
     console.log('Options:');
     console.log('  -w, --weight <weight>         Set font weight (e.g., 400, bold)');
+    console.log('  -s, --style <style>           Set font style (normal, italic, oblique)');
     console.log('  -f, --family <name>           Override font family name');
     console.log('  -c, --charset <chars>         Only extract specified characters');
     console.log('  -o, --output <file>           Output file path');
@@ -602,6 +623,7 @@ function main() {
     console.log('  npm run extract fonts/Roboto-Regular.ttf');
     console.log('  npm run extract fonts/Roboto-Regular.ttf -o src/fonts/roboto.ts');
     console.log('  npm run extract fonts/Arial.ttf --weight 400 --charset "ABC123"');
+    console.log('  npm run extract fonts/Roboto-Italic.ttf --style italic');
     console.log('  npm run extract fonts/Font.ttf --no-kerning');
     process.exit(argv.help ? 0 : 1);
   }
@@ -613,6 +635,7 @@ function main() {
     output: argv.output,
     fontFamily: argv.family,
     fontWeight: argv.weight ? (isNaN(Number(argv.weight)) ? argv.weight : Number(argv.weight)) : 400,
+    fontStyle: argv.style as 'normal' | 'italic' | 'oblique' | undefined,
     charset: argv.charset,
     includeKerning: !argv['no-kerning'],
     useCommonBlocksOnly: !argv['no-common-blocks'],
@@ -635,7 +658,7 @@ function main() {
   if (!options.output) {
     // 优先使用用户指定的 fontFamily，否则使用提取的 fontFamily
     const familyForFileName = options.fontFamily || options.extractedFontFamily || 'Unknown';
-    const fileName = generateFileName(familyForFileName, options.fontWeight || 400);
+    const fileName = generateFileName(familyForFileName, options.fontWeight || 400, options.fontStyle);
     options.output = path.join('src', 'fonts', `${fileName}.ts`);
   }
 
@@ -643,6 +666,9 @@ function main() {
   console.log(`Output file: ${options.output}`);
   if (options.fontWeight) {
     console.log(`Font weight: ${options.fontWeight}`);
+  }
+  if (options.fontStyle) {
+    console.log(`Font style: ${options.fontStyle}`);
   }
   if (options.charset) {
     console.log(`Character set: ${options.charset.length} characters`);
@@ -663,7 +689,7 @@ function main() {
   console.log('');
 
   // 更新 src/fonts/index.ts
-  updateFontsIndex(options.output, options.fontFamily || options.extractedFontFamily || 'Unknown', options.fontWeight || 400);
+  updateFontsIndex(options.output, options.fontFamily || options.extractedFontFamily || 'Unknown', options.fontWeight || 400, options.fontStyle);
   
   // 在最后输出缺失字符警告（如果有）
   if (warning) {
@@ -674,10 +700,10 @@ function main() {
 /**
  * 更新 src/fonts/index.ts 以导入新字体
  */
-function updateFontsIndex(fontFilePath: string, fontFamily: string, fontWeight: string | number) {
+function updateFontsIndex(fontFilePath: string, fontFamily: string, fontWeight: string | number, fontStyle?: 'normal' | 'italic' | 'oblique') {
   const fontsIndexPath = path.join('src', 'fonts', 'index.ts');
   const fileName = path.basename(fontFilePath, '.ts');
-  const exportName = generateExportName(fontFamily, fontWeight);
+  const exportName = generateExportName(fontFamily, fontWeight, fontStyle);
 
   let indexContent = '';
   if (fs.existsSync(fontsIndexPath)) {

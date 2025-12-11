@@ -7,6 +7,7 @@ import type { FontData } from '../types';
 export default {
   fontFamily: 'Arial',
   fontWeight: 400,
+  fontStyle: 'normal',
   unitsPerEm: 2048,
   metrics: {
     ascender: 2189,

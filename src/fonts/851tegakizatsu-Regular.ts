@@ -7,6 +7,7 @@ import type { FontData } from '../types';
 export default {
   fontFamily: '851tegakizatsu',
   fontWeight: 400,
+  fontStyle: 'normal',
   unitsPerEm: 1024,
   metrics: {
     ascender: 880,

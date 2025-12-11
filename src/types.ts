@@ -4,7 +4,7 @@ export interface TextStyle {
   /** 字体 */
   fontFamily?: string;
   /** 字重 */
-  fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+  fontWeight?: string | number;
   /** 字体样式 */
   fontStyle?: 'normal' | 'italic' | 'oblique';
   /** 文本转换 */
@@ -35,6 +35,8 @@ export interface FontData {
   fontFamily: string;
   /** 字重 */
   fontWeight: string | number;
+  /** 字体样式 */
+  fontStyle?: 'normal' | 'italic' | 'oblique';
   /** 归一化基准，如 1000 或 2048 */
   unitsPerEm: number;
 

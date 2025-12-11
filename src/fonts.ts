@@ -1,7 +1,7 @@
 import type { FontData } from './types';
 
-// 字体注册表：family -> weight -> FontData
-const fontRegistry = new Map<string, Map<string, FontData>>();
+// 字体注册表：family -> weight -> style -> FontData
+const fontRegistry = new Map<string, Map<string, Map<string, FontData>>>();
 
 // 默认字体
 let defaultFontFamily = 'sans-serif';
@@ -14,6 +14,7 @@ let defaultFontFamily = 'sans-serif';
 const fallbackFontData: FontData = {
   fontFamily: 'sans-serif',
   fontWeight: 400,
+  fontStyle: 'normal',
   unitsPerEm: 2048,
   metrics: {
     ascender: 2189,
@@ -93,6 +94,7 @@ function normalizeWeight(weight?: string | number): string {
     'ultra-light': '200',
     light: '300',
     regular: '400',
+    normal: '400',
     medium: '500',
     'semi-bold': '600',
     semibold: '600',
@@ -121,11 +123,19 @@ function normalizeWeight(weight?: string | number): string {
 }
 
 /**
+ * 归一化字体样式
+ */
+function normalizeStyle(style?: 'normal' | 'italic' | 'oblique'): string {
+  return style || 'normal';
+}
+
+/**
  * 注册字体数据
  */
 export function registerFont(data: FontData): void {
   const family = data.fontFamily;
   const normalizedWeight = normalizeWeight(data.fontWeight);
+  const normalizedStyle = normalizeStyle(data.fontStyle);
 
   // 如果使用了 glyphsByWidth 压缩格式，需要展开到 glyphs
   if (data.glyphsByWidth) {
@@ -160,7 +170,12 @@ export function registerFont(data: FontData): void {
   }
 
   const familyMap = fontRegistry.get(family)!;
-  familyMap.set(normalizedWeight, data);
+  if (!familyMap.has(normalizedWeight)) {
+    familyMap.set(normalizedWeight, new Map());
+  }
+
+  const weightMap = familyMap.get(normalizedWeight)!;
+  weightMap.set(normalizedStyle, data);
 }
 
 /**
@@ -174,13 +189,16 @@ export function setDefaultFontFamily(fontFamily: string): void {
  * 获取字体数据
  * @param family 字体名称，未指定时使用默认字体
  * @param weight 字重，未指定时使用 normal (400)
+ * @param style 字体样式，未指定时使用 normal
  */
 export function getFontData(
   family?: string,
-  weight?: string | number
+  weight?: string | number,
+  style?: 'normal' | 'italic' | 'oblique'
 ): FontData {
   const targetFamily = family || defaultFontFamily;
   const normalizedWeight = normalizeWeight(weight);
+  const normalizedStyle = normalizeStyle(style);
 
   const familyMap = fontRegistry.get(targetFamily);
   if (!familyMap) {
@@ -190,19 +208,48 @@ export function getFontData(
     return fallbackFontData;
   }
 
-  // 优先使用精确匹配的字重
-  let fontData = familyMap.get(normalizedWeight);
-  if (fontData) return fontData;
+  // 优先使用精确匹配的字重和样式
+  let weightMap = familyMap.get(normalizedWeight);
+  if (weightMap) {
+    let fontData = weightMap.get(normalizedStyle);
+    if (fontData) return fontData;
 
-  // 如果找不到，尝试使用 400（normal）
-  fontData = familyMap.get('400');
-  if (fontData) return fontData;
+    // 如果找不到指定样式，尝试降级到 normal
+    if (normalizedStyle !== 'normal') {
+      fontData = weightMap.get('normal');
+      if (fontData) return fontData;
+    }
 
-  // 如果还找不到，使用该 family 下的第一个可用字重
-  const firstWeight = familyMap.values().next().value;
-  if (firstWeight) return firstWeight;
+    // 返回该字重下的第一个可用样式
+    const firstStyle = weightMap.values().next().value;
+    if (firstStyle) return firstStyle;
+  }
+
+  // 如果找不到指定字重，尝试使用 400（normal）
+  weightMap = familyMap.get('400');
+  if (weightMap) {
+    let fontData = weightMap.get(normalizedStyle);
+    if (fontData) return fontData;
+
+    // 降级到 normal 样式
+    if (normalizedStyle !== 'normal') {
+      fontData = weightMap.get('normal');
+      if (fontData) return fontData;
+    }
+
+    // 返回该字重下的第一个可用样式
+    const firstStyle = weightMap.values().next().value;
+    if (firstStyle) return firstStyle;
+  }
+
+  // 如果还找不到，使用该 family 下的第一个可用字重和样式
+  const firstWeightMap = familyMap.values().next().value;
+  if (firstWeightMap) {
+    const firstStyle = firstWeightMap.values().next().value;
+    if (firstStyle) return firstStyle;
+  }
 
   throw new Error(
-    `No font data found for family "${targetFamily}" with weight "${normalizedWeight}"`
+    `No font data found for family "${targetFamily}" with weight "${normalizedWeight}" and style "${normalizedStyle}"`
   );
 }

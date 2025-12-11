@@ -52,6 +52,7 @@ registerFont(AlibabaPuHuiTi);
 const metrics = measureText('你好世界', {
   fontFamily: 'Alibaba PuHuiTi',
   fontSize: 16,
+  fontStyle: 'normal', // 支持 'normal' | 'italic' | 'oblique'
 });
 ```
 
@@ -59,6 +60,7 @@ const metrics = measureText('你好世界', {
 - ✅ 核心库体积小（3-5KB），只在需要时加载字体数据
 - ✅ Tree-shaking 友好，打包工具自动去除未使用的字体
 - ✅ 灵活控制打包体积
+- ✅ 支持多种字体样式（normal, italic, oblique）
 
 **字体导入方式**：
 
@@ -147,6 +149,13 @@ npm run extract fonts/Roboto-Bold.ttf --weight 700
 npm run extract fonts/Roboto-Bold.ttf -w 700
 ```
 
+**指定字体样式：**
+```bash
+npm run extract fonts/Roboto-Italic.ttf --style italic
+# 或简写
+npm run extract fonts/Roboto-Italic.ttf -s italic
+```
+
 **自定义字体名称：**
 ```bash
 npm run extract fonts/CustomFont.ttf --family "自定义字体"
@@ -171,6 +180,7 @@ npm run extract fonts/Font.ttf --no-kerning
 | 选项 | 简写 | 说明 | 示例 |
 |------|------|------|------|
 | `--weight <weight>` | `-w` | 设置字重 | `--weight 700` |
+| `--style <style>` | `-s` | 设置字体样式 (normal/italic/oblique) | `--style italic` |
 | `--family <name>` | `-f` | 自定义字体名称 | `--family "我的字体"` |
 | `--charset <chars>` | `-c` | 只提取指定字符 | `--charset "ABC123"` |
 | `--output <file>` | `-o` | 输出文件路径 | `-o src/fonts/my-font.ts` |

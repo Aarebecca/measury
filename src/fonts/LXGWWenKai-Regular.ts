@@ -7,6 +7,7 @@ import type { FontData } from '../types';
 export default {
   fontFamily: 'LXGW WenKai',
   fontWeight: 400,
+  fontStyle: 'normal',
   unitsPerEm: 1000,
   metrics: {
     ascender: 928,

@@ -169,4 +169,90 @@ describe('Font Management', () => {
       expect(retrieved.fontFamily).toBe('DefaultTest');
     });
   });
+
+  describe('fontStyle support', () => {
+    it('should register and retrieve font with normal style', () => {
+      const font = {
+        fontFamily: 'StyleTest',
+        fontWeight: 400,
+        fontStyle: 'normal' as const,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 500 },
+      };
+
+      registerFont(font);
+      const retrieved = getFontData('StyleTest', 400, 'normal');
+
+      expect(retrieved.fontFamily).toBe('StyleTest');
+      expect(retrieved.fontStyle).toBe('normal');
+      expect(retrieved.glyphs?.A).toBe(500);
+    });
+
+    it('should register and retrieve font with italic style', () => {
+      const font = {
+        fontFamily: 'StyleTest',
+        fontWeight: 400,
+        fontStyle: 'italic' as const,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 550 },
+      };
+
+      registerFont(font);
+      const retrieved = getFontData('StyleTest', 400, 'italic');
+
+      expect(retrieved.fontFamily).toBe('StyleTest');
+      expect(retrieved.fontStyle).toBe('italic');
+      expect(retrieved.glyphs?.A).toBe(550);
+    });
+
+    it('should fallback to normal style if requested style not found', () => {
+      const font = {
+        fontFamily: 'StyleFallback',
+        fontWeight: 400,
+        fontStyle: 'normal' as const,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 500 },
+      };
+
+      registerFont(font);
+      // Request italic but only normal is registered
+      const retrieved = getFontData('StyleFallback', 400, 'italic');
+
+      expect(retrieved.fontFamily).toBe('StyleFallback');
+      expect(retrieved.fontStyle).toBe('normal');
+      expect(retrieved.glyphs?.A).toBe(500);
+    });
+
+    it('should support multiple styles for same family and weight', () => {
+      const normal = {
+        fontFamily: 'MultiStyle',
+        fontWeight: 400,
+        fontStyle: 'normal' as const,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 500 },
+      };
+
+      const italic = {
+        fontFamily: 'MultiStyle',
+        fontWeight: 400,
+        fontStyle: 'italic' as const,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 550 },
+      };
+
+      registerFont(normal);
+      registerFont(italic);
+
+      const retrievedNormal = getFontData('MultiStyle', 400, 'normal');
+      const retrievedItalic = getFontData('MultiStyle', 400, 'italic');
+
+      expect(retrievedNormal.glyphs?.A).toBe(500);
+      expect(retrievedItalic.glyphs?.A).toBe(550);
+    });
+  });
 });

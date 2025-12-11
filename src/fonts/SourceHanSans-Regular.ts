@@ -7,6 +7,7 @@ import type { FontData } from '../types';
 export default {
   fontFamily: 'Source Han Sans',
   fontWeight: 400,
+  fontStyle: 'normal',
   unitsPerEm: 1000,
   metrics: {
     ascender: 880,

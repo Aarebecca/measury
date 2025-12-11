@@ -256,4 +256,56 @@ describe('Font Registration', () => {
     // Should use defaultWidth
     expect(metrics.width).toBeCloseTo(8, 1); // (500/1000) * 16
   });
+
+  it('should use fontStyle in measurement', () => {
+    const normalFont = {
+      fontFamily: 'StyleTestFont',
+      fontWeight: 400,
+      fontStyle: 'normal' as const,
+      unitsPerEm: 1000,
+      metrics: {
+        ascender: 800,
+        descender: -200,
+      },
+      glyphs: {
+        A: 500,
+      },
+    };
+
+    const italicFont = {
+      fontFamily: 'StyleTestFont',
+      fontWeight: 400,
+      fontStyle: 'italic' as const,
+      unitsPerEm: 1000,
+      metrics: {
+        ascender: 800,
+        descender: -200,
+      },
+      glyphs: {
+        A: 550, // Italic is slightly wider
+      },
+    };
+
+    registerFont(normalFont);
+    registerFont(italicFont);
+
+    const normalMetrics = measureText('A', {
+      fontFamily: 'StyleTestFont',
+      fontSize: 16,
+      fontWeight: 400,
+      fontStyle: 'normal',
+    });
+
+    const italicMetrics = measureText('A', {
+      fontFamily: 'StyleTestFont',
+      fontSize: 16,
+      fontWeight: 400,
+      fontStyle: 'italic',
+    });
+
+    // Normal: (500/1000) * 16 = 8
+    expect(normalMetrics.width).toBeCloseTo(8, 1);
+    // Italic: (550/1000) * 16 = 8.8
+    expect(italicMetrics.width).toBeCloseTo(8.8, 1);
+  });
 });

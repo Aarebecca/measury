@@ -66,7 +66,11 @@ export function measureText(text: string, style: TextStyle = {}): TextMetrics {
   const transformedText = applyTextTransform(text, style.textTransform);
 
   // 2. 获取字体数据
-  const fontData = getFontData(style.fontFamily, style.fontWeight);
+  const fontData = getFontData(
+    style.fontFamily,
+    style.fontWeight,
+    style.fontStyle
+  );
   const fontSize = style.fontSize || 16;
   const letterSpacing = style.letterSpacing || 0;
   const wordSpacing = style.wordSpacing || 0;
