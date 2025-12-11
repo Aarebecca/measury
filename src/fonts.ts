@@ -9,35 +9,73 @@ let defaultFontFamily = 'sans-serif';
 /**
  * 通用降级字体数据
  * 用于未注册的字体，提供基本的估算能力
- * 基于常见西文字体的平均值
+ * 基于 Arial
  */
 const fallbackFontData: FontData = {
   fontFamily: 'sans-serif',
   fontWeight: 400,
-  unitsPerEm: 1000,
+  unitsPerEm: 2048,
   metrics: {
-    ascender: 950,
-    descender: -250,
+    ascender: 2189,
+    descender: -555,
     lineGap: 0,
   },
+  // ASCII 字符的平均宽度
   glyphs: {
-    // ASCII 字符的平均宽度（基于 Arial/Helvetica）
-    ' ': 278,
-    '!': 278, '"': 355, '#': 556, '$': 556, '%': 889, '&': 667, '\'': 191,
-    '(': 333, ')': 333, '*': 389, '+': 584, ',': 278, '-': 333, '.': 278, '/': 278,
-    '0': 556, '1': 556, '2': 556, '3': 556, '4': 556, '5': 556, '6': 556, '7': 556,
-    '8': 556, '9': 556, ':': 278, ';': 278, '<': 584, '=': 584, '>': 584, '?': 556,
-    '@': 1015, 'A': 667, 'B': 667, 'C': 722, 'D': 722, 'E': 667, 'F': 611, 'G': 778,
-    'H': 722, 'I': 278, 'J': 500, 'K': 667, 'L': 556, 'M': 833, 'N': 722, 'O': 778,
-    'P': 667, 'Q': 778, 'R': 722, 'S': 667, 'T': 611, 'U': 722, 'V': 667, 'W': 944,
-    'X': 667, 'Y': 667, 'Z': 611, '[': 278, '\\': 278, ']': 278, '^': 469, '_': 556,
-    '`': 333, 'a': 556, 'b': 556, 'c': 500, 'd': 556, 'e': 556, 'f': 278, 'g': 556,
-    'h': 556, 'i': 222, 'j': 222, 'k': 500, 'l': 222, 'm': 833, 'n': 556, 'o': 556,
-    'p': 556, 'q': 556, 'r': 333, 's': 500, 't': 278, 'u': 556, 'v': 500, 'w': 722,
-    'x': 500, 'y': 500, 'z': 500, '{': 334, '|': 260, '}': 334, '~': 584,
-    // 中文字符使用全角宽度（em）
-    '中': 1000, '文': 1000,
+    '"': 727,
+    '%': 1821,
+    "'": 391,
+    '(': 682,
+    ')': 682,
+    '*': 797,
+    '+': 1196,
+    '-': 682,
+    '<': 1196,
+    '=': 1196,
+    '>': 1196,
+    '@': 2079,
+    C: 1479,
+    D: 1479,
+    F: 1251,
+    G: 1593,
+    H: 1479,
+    J: 1024,
+    M: 1706,
+    N: 1479,
+    O: 1593,
+    Q: 1593,
+    R: 1479,
+    T: 1251,
+    U: 1479,
+    W: 1933,
+    Z: 1251,
+    '^': 961,
+    _: 1024,
+    '`': 682,
+    c: 1024,
+    i: 455,
+    j: 455,
+    k: 1024,
+    l: 455,
+    m: 1706,
+    r: 682,
+    s: 1024,
+    v: 1024,
+    w: 1479,
+    x: 1024,
+    y: 1024,
+    z: 1024,
+    '{': 684,
+    '|': 532,
+    '}': 684,
+    '~': 1196,
   },
+  glyphsByWidth: {
+    569: ' !,./:;I[\\]ft',
+    1139: '#$0123456789?Labdeghnopqu',
+    1366: '&ABEKPSVXY',
+  },
+  defaultWidth: 1139,
 };
 
 /**
@@ -46,32 +84,32 @@ const fallbackFontData: FontData = {
 function normalizeWeight(weight?: string | number): string {
   if (weight === undefined || weight === 'normal') return '400';
   if (weight === 'bold') return '700';
-  
+
   // 处理命名字重
   const namedWeights: Record<string, string> = {
-    'thin': '100',
-    'hairline': '100',
+    thin: '100',
+    hairline: '100',
     'extra-light': '200',
     'ultra-light': '200',
-    'light': '300',
-    'regular': '400',
-    'medium': '500',
+    light: '300',
+    regular: '400',
+    medium: '500',
     'semi-bold': '600',
-    'semibold': '600',
+    semibold: '600',
     'demi-bold': '600',
-    'demibold': '600',
+    demibold: '600',
     'extra-bold': '800',
-    'extrabold': '800',
+    extrabold: '800',
     'ultra-bold': '800',
-    'ultrabold': '800',
-    'black': '900',
-    'heavy': '900',
+    ultrabold: '800',
+    black: '900',
+    heavy: '900',
     'extra-black': '950',
-    'extrablack': '950',
+    extrablack: '950',
     'ultra-black': '950',
-    'ultrablack': '950',
-    'bolder': '900',
-    'lighter': '300',
+    ultrablack: '950',
+    bolder: '900',
+    lighter: '300',
   };
 
   if (typeof weight === 'string') {
@@ -92,8 +130,10 @@ export function registerFont(data: FontData): void {
   // 如果使用了 glyphsByWidth 压缩格式，需要展开到 glyphs
   if (data.glyphsByWidth) {
     const expandedGlyphs: Record<string, number> = { ...(data.glyphs || {}) };
-    
-    for (const [widthOrChar, valueOrWidth] of Object.entries(data.glyphsByWidth)) {
+
+    for (const [widthOrChar, valueOrWidth] of Object.entries(
+      data.glyphsByWidth
+    )) {
       if (typeof valueOrWidth === 'string') {
         // 这是压缩格式：width -> characters string
         const width = Number(widthOrChar);
@@ -105,7 +145,7 @@ export function registerFont(data: FontData): void {
         expandedGlyphs[widthOrChar] = valueOrWidth;
       }
     }
-    
+
     // 创建新的 fontData 对象，用展开后的 glyphs 替换原来的
     data = {
       ...data,
@@ -144,7 +184,9 @@ export function getFontData(
 
   const familyMap = fontRegistry.get(targetFamily);
   if (!familyMap) {
-    console.warn(`Font family "${targetFamily}" not registered, using fallback font data`);
+    console.warn(
+      `Font family "${targetFamily}" not registered, using fallback font data`
+    );
     return fallbackFontData;
   }
 
