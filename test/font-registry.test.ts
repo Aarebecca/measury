@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { registerFont, getFontData, setDefaultFontFamily } from '../src/fonts';
+import { registerFont, getFontData, setDefaultFontFamily } from '../src/font';
 
 describe('Font Management', () => {
   describe('registerFont', () => {

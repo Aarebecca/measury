@@ -1,5 +1,5 @@
 import type { TextMetrics, TextStyle, FontData } from './types';
-import { getFontData } from './fonts';
+import { getFontData } from './font.js';
 
 /**
  * 应用文本转换

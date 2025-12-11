@@ -711,7 +711,7 @@ function updateFontsIndex(fontFilePath: string, fontFamily: string, fontWeight: 
   }
 
   // 检查是否已经导入
-  const exportStatement = `export { default as ${exportName} } from './${fileName}';`;
+  const exportStatement = `export { default as ${exportName} } from './${fileName}.js';`;
   if (!indexContent.includes(exportStatement)) {
     indexContent += `${exportStatement}\n`;
     fs.writeFileSync(fontsIndexPath, indexContent, 'utf-8');
