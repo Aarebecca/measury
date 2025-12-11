@@ -43,10 +43,10 @@ console.log(metrics.baseline); // 基线位置（像素）
 
 ```typescript
 import { measureText, registerFont } from 'measury';
-import AlibabaPuHuiTiRegular from 'measury/AlibabaPuHuiTi-Regular';
+import AlibabaPuHuiTiRegular from 'measury/fonts/AlibabaPuHuiTi-Regular';
 
 // 注册字体
-registerFont(AlibabaPuHuiTi);
+registerFont(AlibabaPuHuiTiRegular);
 
 // 精确测量
 const metrics = measureText('你好世界', {
@@ -65,7 +65,7 @@ const metrics = measureText('你好世界', {
 **字体导入方式**：
 
 ```typescript
-import AlibabaPuHuiTiRegular from 'measury/AlibabaPuHuiTi-Regular';
+import AlibabaPuHuiTiRegular from 'measury/fonts/AlibabaPuHuiTi-Regular';
 ```
 
 ## 📖 API
