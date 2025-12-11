@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,20 +13,20 @@
       margin: 0;
       padding: 20px;
     }
-    
+
     h1 {
       color: #333;
       max-width: 1600px;
       margin: 0 auto 20px;
       font-size: 28px;
     }
-    
+
     h2 {
       color: #333;
       font-size: 20px;
       margin-bottom: 15px;
     }
-    
+
     .test-section {
       margin: 30px auto;
       padding: 20px;
@@ -33,7 +34,7 @@
       border-radius: 8px;
       max-width: 1600px;
     }
-    
+
     /* 两栏布局容器 */
     .two-column-layout {
       display: grid;
@@ -42,23 +43,25 @@
       max-width: 1600px;
       margin: 30px auto;
     }
-    
-    .left-column, .right-column {
-      min-width: 0; /* 防止内容溢出 */
+
+    .left-column,
+    .right-column {
+      min-width: 0;
+      /* 防止内容溢出 */
     }
-    
+
     .preset-tests-section {
       padding: 20px;
       border: 1px solid #ddd;
       border-radius: 8px;
       height: 100%;
     }
-    
+
     .preset-tests-section h2 {
       margin-top: 0;
       color: #333;
     }
-    
+
     .code-output-section {
       padding: 20px;
       border: 1px solid #ddd;
@@ -68,33 +71,33 @@
       position: sticky;
       top: 20px;
     }
-    
+
     .code-output-section h2 {
       margin-top: 0;
       color: #333;
     }
-    
+
     /* 响应式布局 */
     @media (max-width: 1200px) {
       .two-column-layout {
         grid-template-columns: 1fr;
       }
     }
-    
+
     .test-item {
       margin: 20px 0;
       padding: 15px;
       background: #f5f5f5;
       border-radius: 4px;
     }
-    
+
     .measurement-box {
       display: inline-block;
       outline: 2px solid #4CAF50;
       background: #fff;
       position: relative;
     }
-    
+
     .measurement-box::after {
       content: '';
       position: absolute;
@@ -104,18 +107,18 @@
       background: red;
       opacity: 0.5;
     }
-    
+
     .results {
       margin-top: 10px;
       font-family: 'Courier New', monospace;
       font-size: 14px;
       color: #666;
     }
-    
+
     .results div {
       margin: 5px 0;
     }
-    
+
     .comparison {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -125,24 +128,24 @@
       background: #fff;
       border-radius: 4px;
     }
-    
+
     .comparison div {
       padding: 5px;
     }
-    
+
     .comparison .label {
       font-weight: bold;
       color: #333;
     }
-    
+
     .comparison .match {
       color: #4CAF50;
     }
-    
+
     .comparison .mismatch {
       color: #f44336;
     }
-    
+
     button {
       padding: 10px 20px;
       background: #4CAF50;
@@ -153,25 +156,25 @@
       font-size: 16px;
       margin: 10px 10px 10px 0;
     }
-    
+
     button:hover {
       background: #45a049;
     }
-    
+
     button.secondary {
       background: #2196F3;
     }
-    
+
     button.secondary:hover {
       background: #0b7dda;
     }
-    
+
     .code-actions {
       margin-bottom: 10px;
       display: flex;
       gap: 10px;
     }
-    
+
     .copy-feedback {
       display: inline-block;
       margin-left: 10px;
@@ -180,11 +183,11 @@
       opacity: 0;
       transition: opacity 0.3s;
     }
-    
+
     .copy-feedback.show {
       opacity: 1;
     }
-    
+
     #output {
       padding: 15px;
       background: #fff;
@@ -197,13 +200,13 @@
       line-height: 1.5;
       border: 1px solid #ddd;
     }
-    
+
     #output:empty::before {
       content: '运行测试后，生成的代码将显示在这里...';
       color: #999;
       font-style: italic;
     }
-    
+
     .test-case {
       margin: 10px 0;
       padding: 10px;
@@ -211,42 +214,42 @@
       border-left: 3px solid #2196F3;
       font-size: 14px;
     }
-    
+
     .test-case h3 {
       margin-top: 0;
       font-size: 16px;
     }
-    
+
     #testResults {
       max-height: 600px;
       overflow-y: auto;
     }
-    
+
     #testResults:empty::before {
       content: '点击"运行所有测试"查看结果...';
       color: #999;
       font-style: italic;
     }
-    
+
     .font-status {
       padding: 15px;
       margin-bottom: 20px;
       border-radius: 4px;
       font-weight: bold;
     }
-    
+
     .font-status.loading {
       background: #fff3cd;
       color: #856404;
       border: 1px solid #ffc107;
     }
-    
+
     .font-status.loaded {
       background: #d4edda;
       color: #155724;
       border: 1px solid #28a745;
     }
-    
+
     .font-status.error {
       background: #f8d7da;
       color: #721c24;
@@ -254,14 +257,15 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Text Width 浏览器测试工具</h1>
-  
+
   <!-- 字体加载状态 -->
   <div id="fontStatus" class="font-status loading">
     ⏳ 正在加载字体...
   </div>
-  
+
   <div class="test-section">
     <h2>使用说明</h2>
     <p>1. 页面会自动加载 test-browser/fonts 目录下的字体文件</p>
@@ -344,31 +348,31 @@
         fileName: cleanName
       };
     }
-    
+
     // 获取字体映射（优先使用 fontMapping，否则使用默认规则）
     function getFontMapping(fontName) {
       return fontMapping[fontName] || getDefaultFontMapping(fontName);
     }
-    
+
     // 从 CSS 中解析字体列表
     async function loadAvailableFonts() {
       try {
         const response = await fetch('./fonts.css');
         const cssText = await response.text();
-        
+
         // 使用正则表达式提取所有 font-family 名称
         const fontFaceRegex = /@font-face\s*{[^}]*font-family:\s*['"]([^'"]+)['"]/g;
         const fonts = new Set();
-        
+
         let match;
         while ((match = fontFaceRegex.exec(cssText)) !== null) {
           fonts.add(match[1]);
         }
-        
+
         // 填充字体选择框
         const fontSelect = document.getElementById('customFont');
         fontSelect.innerHTML = '';
-        
+
         fonts.forEach(font => {
           const option = document.createElement('option');
           option.value = font;
@@ -376,7 +380,7 @@
           option.textContent = mapping.displayName;
           fontSelect.appendChild(option);
         });
-        
+
         return Array.from(fonts);
       } catch (error) {
         console.error('加载字体列表失败:', error);
@@ -386,31 +390,32 @@
           <option value="Alibaba PuHuiTi">Alibaba PuHuiTi (阿里巴巴普惠体)</option>
           <option value="Source Han Sans">Source Han Sans (思源黑体)</option>
           <option value="Source Han Serif">Source Han Serif (思源宋体)</option>
+          <option value="Arial">Arial (Arial)</option>
         `;
-        return ['Alibaba PuHuiTi', 'Source Han Sans', 'Source Han Serif'];
+        return ['Alibaba PuHuiTi', 'Source Han Sans', 'Source Han Serif', 'Arial'];
       }
     }
-    
+
     // 检测字体加载状态
     async function checkFontLoading() {
       const fontStatus = document.getElementById('fontStatus');
-      
+
       try {
         // 先加载字体列表
         const availableFonts = await loadAvailableFonts();
-        
+
         // 使用 Font Loading API 检测所有字体
         if ('fonts' in document) {
-          const loadPromises = availableFonts.map(font => 
+          const loadPromises = availableFonts.map(font =>
             document.fonts.load(`16px "${font}"`)
           );
-          
+
           await Promise.all(loadPromises);
-          
+
           // 检查每个字体是否真的可用
           const loadedFonts = [];
           const failedFonts = [];
-          
+
           for (const font of availableFonts) {
             const fontAvailable = document.fonts.check(`16px "${font}"`);
             if (fontAvailable) {
@@ -419,7 +424,7 @@
               failedFonts.push(font);
             }
           }
-          
+
           if (failedFonts.length === 0) {
             fontStatus.className = 'font-status loaded';
             fontStatus.innerHTML = `✅ 所有字体加载成功：${loadedFonts.join(', ')}`;
@@ -442,10 +447,10 @@
         fontStatus.innerHTML = '❌ 字体加载出错：' + error.message;
       }
     }
-    
+
     // 页面加载时检测字体
     window.addEventListener('load', checkFontLoading);
-    
+
     // 标准测试文本集合
     const standardTexts = {
       // 纯英文（无空格）
@@ -479,17 +484,17 @@
       // 中英数字混合
       comprehensive: 'Product价格: $99.99元',
     };
-    
+
     // 标准字号
     const standardFontSizes = [12, 16, 24, 48];
-    
+
     // 动态生成测试用例（基于已加载的字体）
     function generateTestCases() {
       const cases = [];
-      
+
       // 获取所有已加载的字体
       const fonts = Array.from(document.getElementById('customFont').options).map(opt => opt.value);
-      
+
       fonts.forEach(font => {
         // 为每个字体生成标准测试用例
         standardFontSizes.forEach(fontSize => {
@@ -499,31 +504,31 @@
             text: standardTexts.englishWithSpaces,
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
-          
+
           cases.push({
             name: `${font} [${fontSize}px] - 纯英文带标点`,
             text: standardTexts.englishWithPunctuation,
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
-          
+
           cases.push({
             name: `${font} [${fontSize}px] - 纯中文`,
             text: standardTexts.pureChinese,
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
-          
+
           cases.push({
             name: `${font} [${fontSize}px] - 纯中文带标点`,
             text: standardTexts.chineseWithPunctuation,
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
-          
+
           cases.push({
             name: `${font} [${fontSize}px] - 中英混排带空格`,
             text: standardTexts.mixedWithSpaces,
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
-          
+
           // 仅在 16px 时测试更多场景（避免测试用例过多）
           if (fontSize === 16) {
             cases.push({
@@ -531,43 +536,43 @@
               text: standardTexts.pureEnglish,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 英文句子`,
               text: standardTexts.englishSentence,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 中文句子`,
               text: standardTexts.chineseSentence,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 中英混排带标点`,
               text: standardTexts.mixedWithPunctuation,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 数字`,
               text: standardTexts.numbers,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 数字与文本`,
               text: standardTexts.numbersWithText,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 特殊字符`,
               text: standardTexts.specialChars,
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
-            
+
             cases.push({
               name: `${font} [${fontSize}px] - 综合测试`,
               text: standardTexts.comprehensive,
@@ -576,44 +581,50 @@
           }
         });
       });
-      
+
       return cases;
     }
-    
+
     // 初始测试用例（在字体加载完成前使用）
     let testCases = [];
 
     // 字体的完整 metrics 映射（与代码库保持一致）
     const fontMetrics = {
-      'Alibaba PuHuiTi': { 
-        ascender: 1060, 
+      Arial: {
+        ascender: 2189,
+        descender: -555,
+        lineGap: 0,
+        unitsPerEm: 2048,
+      },
+      'Alibaba PuHuiTi': {
+        ascender: 1060,
         descender: -340,
         lineGap: 0,
-        unitsPerEm: 1000 
+        unitsPerEm: 1000
       },
-      'Source Han Sans': { 
-        ascender: 880, 
+      'Source Han Sans': {
+        ascender: 880,
         descender: -120,
         lineGap: 500,
-        unitsPerEm: 1000 
+        unitsPerEm: 1000
       },
-      'Source Han Serif': { 
-        ascender: 1151, 
+      'Source Han Serif': {
+        ascender: 1151,
         descender: -286,
         lineGap: 0,
-        unitsPerEm: 1000 
+        unitsPerEm: 1000
       },
-      'LXGW WenKai': { 
-        ascender: 928, 
+      'LXGW WenKai': {
+        ascender: 928,
         descender: -256,
         lineGap: 0,
-        unitsPerEm: 1000 
+        unitsPerEm: 1000
       },
-      '851tegakizatsu': { 
-        ascender: 880, 
+      '851tegakizatsu': {
+        ascender: 880,
         descender: -144,
         lineGap: 0,
-        unitsPerEm: 1024 
+        unitsPerEm: 1024
       },
     };
 
@@ -626,7 +637,7 @@
           console.warn('字体加载失败:', e);
         }
       }
-      
+
       const div = document.createElement('div');
       div.style.position = 'absolute';
       div.style.visibility = 'hidden';
@@ -637,21 +648,21 @@
       div.style.letterSpacing = (style.letterSpacing || 0) + 'px';
       div.style.wordSpacing = (style.wordSpacing || 0) + 'px';
       div.textContent = text;
-      
+
       // 确保没有其他样式干扰
       div.style.padding = '0';
       div.style.margin = '0';
       div.style.border = 'none';
       div.style.boxSizing = 'content-box';
-      
+
       document.body.appendChild(div);
       const rect = div.getBoundingClientRect();
       const computedStyle = window.getComputedStyle(div);
-      
+
       // 获取字体 metrics
       const metrics = fontMetrics[style.fontFamily];
       const fontSize = style.fontSize;
-      
+
       // 计算高度（使用字体 metrics，与代码库保持一致）
       let height;
       if (metrics) {
@@ -662,7 +673,7 @@
         // 降级：使用浏览器实际渲染高度
         height = rect.height;
       }
-      
+
       // 计算 baseline（使用字体的 ascender 比例）
       let baseline;
       if (metrics) {
@@ -671,18 +682,18 @@
         // 如果没有字体数据，使用通用估算值
         baseline = fontSize * 0.8;
       }
-      
+
       // 获取计算后的行高
       let lineHeight = parseFloat(computedStyle.lineHeight);
-      
+
       // 如果 lineHeight 是 'normal'，parseFloat 会返回 NaN
       // 这种情况下使用计算的高度
       if (isNaN(lineHeight)) {
         lineHeight = height;
       }
-      
+
       document.body.removeChild(div);
-      
+
       return {
         width: rect.width,
         height: height,
@@ -697,16 +708,16 @@
       const fontFamily = document.getElementById('customFont').value;
       const fontSize = parseInt(document.getElementById('customSize').value);
       const fontWeight = parseInt(document.getElementById('customWeight').value);
-      
+
       const result = await measureText(text, { fontFamily, fontSize, fontWeight });
-      
+
       // 保存当前测试结果供生成代码使用
       window.currentCustomTest = {
         text,
         style: { fontFamily, fontSize, fontWeight },
         measured: result
       };
-      
+
       const resultDiv = document.getElementById('customResult');
       resultDiv.innerHTML = `
         <div class="test-item">
@@ -736,22 +747,22 @@ expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 1);</pre>
         </div>
       `;
     }
-    
+
     // 从当前自定义测试生成完整测试代码
     function generateTestCodeFromCustom() {
       if (!window.currentCustomTest) {
         alert('请先运行自定义测试！');
         return;
       }
-      
+
       const r = window.currentCustomTest;
       const { fontFamily, fontSize, fontWeight } = r.style;
-      
+
       const mapping = getFontMapping(fontFamily);
-      
+
       const styleName = weightToStyle[fontWeight] || 'Regular';
       const importVarName = `${mapping.varName}${styleName}`;
-      
+
       // 生成导入语句
       const imports = `import { describe, expect, it, beforeAll } from 'vitest';
 import { measureText, registerFont } from '../src';
@@ -762,13 +773,13 @@ beforeAll(() => {
   registerFont(${importVarName});
 });
 `;
-      
+
       // 生成测试用例（三层结构）
       const styleProps = [];
       styleProps.push(`fontFamily: '${fontFamily}'`);
       styleProps.push(`fontSize: ${fontSize}`);
       if (fontWeight !== 400) styleProps.push(`fontWeight: ${fontWeight}`);
-      
+
       const testCase = `describe('${fontFamily}', () => {
   describe('[${fontSize}px] [${fontWeight}]', () => {
     it('"${r.text}"', () => {
@@ -782,7 +793,7 @@ beforeAll(() => {
     });
   });
 });`;
-      
+
       const fullCode = imports + '\n' + testCase;
       document.getElementById('output').textContent = fullCode;
     }
@@ -790,12 +801,12 @@ beforeAll(() => {
     async function runAllTests() {
       // 生成标准化测试用例
       testCases = generateTestCases();
-      
+
       if (testCases.length === 0) {
         alert('没有可用的字体，请确保字体已加载！');
         return;
       }
-      
+
       const results = [];
       for (const testCase of testCases) {
         const result = await measureText(testCase.text, testCase.style);
@@ -804,7 +815,7 @@ beforeAll(() => {
           measured: result
         });
       }
-      
+
       const resultsDiv = document.getElementById('testResults');
       resultsDiv.innerHTML = `<div style="margin-bottom: 10px; color: #666;">
         <strong>共 ${results.length} 个测试用例</strong>
@@ -827,7 +838,7 @@ beforeAll(() => {
           </div>
         </div>
       `).join('');
-      
+
       // 保存结果供生成代码使用
       window.testResults = results;
     }
@@ -837,18 +848,18 @@ beforeAll(() => {
         alert('请先运行测试！');
         return;
       }
-      
+
       // 按字体分组，然后按字号+字重分组
       const fontGroups = {};
       window.testResults.forEach(r => {
         const font = r.style.fontFamily || 'default';
         const size = r.style.fontSize || 16;
         const weight = r.style.fontWeight || 400;
-        
+
         if (!fontGroups[font]) {
           fontGroups[font] = {};
         }
-        
+
         const sizeWeightKey = `${size}|${weight}`;
         if (!fontGroups[font][sizeWeightKey]) {
           fontGroups[font][sizeWeightKey] = {
@@ -857,10 +868,10 @@ beforeAll(() => {
             tests: []
           };
         }
-        
+
         fontGroups[font][sizeWeightKey].tests.push(r);
       });
-      
+
       // 收集所有唯一的字体+字重组合（用于导入）
       const uniqueFontWeights = new Set();
       Object.keys(fontGroups).forEach(font => {
@@ -868,45 +879,45 @@ beforeAll(() => {
           uniqueFontWeights.add(`${font}|${group.weight}`);
         });
       });
-      
+
       // 生成导入语句
       const imports = `import { describe, expect, it, beforeAll } from 'vitest';
 import { measureText, registerFont } from '../src';
 ${[...uniqueFontWeights].map(fontWeight => {
-  const [font, weight] = fontWeight.split('|');
-  const mapping = getFontMapping(font);
-  const styleName = weightToStyle[weight] || 'Regular';
-  const importVarName = `${mapping.varName}${styleName}`;
-  return `import ${importVarName} from '../src/fonts/${mapping.fileName}-${styleName}';`;
-}).join('\n')}
+        const [font, weight] = fontWeight.split('|');
+        const mapping = getFontMapping(font);
+        const styleName = weightToStyle[weight] || 'Regular';
+        const importVarName = `${mapping.varName}${styleName}`;
+        return `import ${importVarName} from '../src/fonts/${mapping.fileName}-${styleName}';`;
+      }).join('\n')}
 
 beforeAll(() => {
   // 注册字体
 ${[...uniqueFontWeights].map(fontWeight => {
-  const [font, weight] = fontWeight.split('|');
-  const mapping = getFontMapping(font);
-  const styleName = weightToStyle[weight] || 'Regular';
-  const importVarName = `${mapping.varName}${styleName}`;
-  return `  registerFont(${importVarName});`;
-}).join('\n')}
+        const [font, weight] = fontWeight.split('|');
+        const mapping = getFontMapping(font);
+        const styleName = weightToStyle[weight] || 'Regular';
+        const importVarName = `${mapping.varName}${styleName}`;
+        return `  registerFont(${importVarName});`;
+      }).join('\n')}
 });
 `;
-      
+
       // 按字体生成测试用例（三层结构）
       const testGroups = Object.keys(fontGroups).map(font => {
         const sizeWeightGroups = fontGroups[font];
-        
+
         // 第二层：按字号+字重分组
         const nestedDescribes = Object.keys(sizeWeightGroups).map(sizeWeightKey => {
           const { size, weight, tests } = sizeWeightGroups[sizeWeightKey];
-          
+
           // 第三层：测试用例
           const testCases = tests.map(r => {
             const styleProps = [];
             if (r.style.fontFamily) styleProps.push(`fontFamily: '${r.style.fontFamily}'`);
             if (r.style.fontSize) styleProps.push(`fontSize: ${r.style.fontSize}`);
             if (r.style.fontWeight && r.style.fontWeight !== 400) styleProps.push(`fontWeight: ${r.style.fontWeight}`);
-            
+
             return `    it('"${r.text}"', () => {
       const metrics = measureText('${r.text}', {
         ${styleProps.join(',\n        ')}
@@ -917,32 +928,32 @@ ${[...uniqueFontWeights].map(fontWeight => {
       expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 1);
     });`;
           }).join('\n\n');
-          
+
           return `  describe('[${size}px] [${weight}]', () => {
 ${testCases}
   });`;
         }).join('\n\n');
-        
+
         // 第一层：按字体分组
         return `describe('${font}', () => {
 ${nestedDescribes}
 });`;
       }).join('\n\n');
-      
+
       const fullCode = imports + '\n' + testGroups;
       document.getElementById('output').textContent = fullCode;
     }
-    
+
     // 复制代码到剪贴板
     function copyOutputToClipboard() {
       const output = document.getElementById('output');
       const text = output.textContent;
-      
+
       if (!text || text.trim() === '') {
         alert('没有可复制的代码，请先运行测试并生成代码！');
         return;
       }
-      
+
       navigator.clipboard.writeText(text).then(() => {
         // 显示复制成功提示
         const feedback = document.getElementById('copyFeedback');
@@ -973,4 +984,5 @@ ${nestedDescribes}
     }
   </script>
 </body>
+
 </html>

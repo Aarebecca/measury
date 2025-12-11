@@ -8,6 +8,11 @@
  * - displayName: 在下拉框中显示的名称（可选，如果不提供则使用 key）
  */
 const fontMapping = {
+  'Arial':{
+    varName: 'Arial',
+    fileName: 'Arial',
+    displayName: 'Arial'
+  },
   'Alibaba PuHuiTi': {
     varName: 'AlibabaPuHuiTi',
     fileName: 'AlibabaPuHuiTi',

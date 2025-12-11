@@ -16,7 +16,7 @@ describe('Font Management', () => {
       const retrieved = getFontData('TestFont', 400);
 
       expect(retrieved.fontFamily).toBe('TestFont');
-      expect(retrieved.glyphs.A).toBe(500);
+      expect(retrieved.glyphs?.A).toBe(500);
     });
 
     it('should register a font with named weight', () => {
@@ -32,7 +32,7 @@ describe('Font Management', () => {
       const retrieved = getFontData('TestFont', 'bold');
 
       expect(retrieved.fontFamily).toBe('TestFont');
-      expect(retrieved.glyphs.A).toBe(600);
+      expect(retrieved.glyphs?.A).toBe(600);
     });
 
     it('should support multiple weights for same family', () => {
@@ -55,8 +55,8 @@ describe('Font Management', () => {
       registerFont(regular);
       registerFont(bold);
 
-      expect(getFontData('MultiWeight', 400).glyphs.A).toBe(500);
-      expect(getFontData('MultiWeight', 700).glyphs.A).toBe(600);
+      expect(getFontData('MultiWeight', 400).glyphs?.A).toBe(500);
+      expect(getFontData('MultiWeight', 700).glyphs?.A).toBe(600);
     });
   });
 
@@ -90,12 +90,12 @@ describe('Font Management', () => {
       const retrieved = getFontData('FallbackTest', 700);
 
       expect(retrieved.fontFamily).toBe('FallbackTest');
-      expect(retrieved.glyphs.A).toBe(500);
+      expect(retrieved.glyphs?.A).toBe(500);
     });
 
     it('should use fallback font data for unregistered font', () => {
       const fontData = getFontData('NonExistent', 400);
-      
+
       // 应该返回降级字体数据，而不是抛出错误
       expect(fontData).toBeDefined();
       expect(fontData.fontFamily).toBe('sans-serif');
@@ -146,7 +146,7 @@ describe('Font Management', () => {
 
         registerFont(font);
         const retrieved = getFontData(`Weight${number}`, number);
-        expect(retrieved.glyphs.A).toBe(number);
+        expect(retrieved.glyphs?.A).toBe(number);
       });
     });
   });

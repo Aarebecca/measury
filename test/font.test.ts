@@ -5,6 +5,7 @@ import SourceHanSansRegular from '../src/fonts/SourceHanSans-Regular';
 import SourceHanSerifRegular from '../src/fonts/SourceHanSerif-Regular';
 import LXGWWenKaiRegular from '../src/fonts/LXGWWenKai-Regular';
 import _851tegakizatsuRegular from '../src/fonts/851tegakizatsu-Regular';
+import ArialRegular from '../src/fonts/Arial-Regular';
 
 beforeAll(() => {
   // 注册字体
@@ -13,6 +14,7 @@ beforeAll(() => {
   registerFont(SourceHanSerifRegular);
   registerFont(LXGWWenKaiRegular);
   registerFont(_851tegakizatsuRegular);
+  registerFont(ArialRegular);
 });
 
 describe('Alibaba PuHuiTi', () => {
@@ -1616,6 +1618,327 @@ describe('851tegakizatsu', () => {
       // 浏览器实际测量值 (from test-browser/index.html)
       expect(metrics.width).toBeCloseTo(384.0, 1);
       expect(metrics.height).toBeCloseTo(48.0, 1);
+    });
+  });
+});
+
+describe('Arial', () => {
+  describe('[12px] [400]', () => {
+    it('"Hello World"', () => {
+      const metrics = measureText('Hello World', {
+        fontFamily: 'Arial',
+        fontSize: 12,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(62.02, 1);
+      expect(metrics.height).toBeCloseTo(16.08, 1);
+    });
+
+    it('"Hello, World!"', () => {
+      const metrics = measureText('Hello, World!', {
+        fontFamily: 'Arial',
+        fontSize: 12,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(68.69, 1);
+      expect(metrics.height).toBeCloseTo(16.08, 1);
+    });
+
+    it('"你好世界"', () => {
+      const metrics = measureText('你好世界', {
+        fontFamily: 'Arial',
+        fontSize: 12,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(48.0, 1);
+      expect(metrics.height).toBeCloseTo(16.08, 1);
+    });
+
+    it('"你好，世界！"', () => {
+      const metrics = measureText('你好，世界！', {
+        fontFamily: 'Arial',
+        fontSize: 12,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(72.0, 1);
+      expect(metrics.height).toBeCloseTo(16.08, 1);
+    });
+
+    it('"Hello 你好 World"', () => {
+      const metrics = measureText('Hello 你好 World', {
+        fontFamily: 'Arial',
+        fontSize: 12,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(89.35, 1);
+      expect(metrics.height).toBeCloseTo(16.08, 1);
+    });
+  });
+
+  describe('[16px] [400]', () => {
+    it('"Hello World"', () => {
+      const metrics = measureText('Hello World', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(82.69, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"Hello, World!"', () => {
+      const metrics = measureText('Hello, World!', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(91.58, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"你好世界"', () => {
+      const metrics = measureText('你好世界', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(64.0, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"你好，世界！"', () => {
+      const metrics = measureText('你好，世界！', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(96.0, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"Hello 你好 World"', () => {
+      const metrics = measureText('Hello 你好 World', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(119.13, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"HelloWorld"', () => {
+      const metrics = measureText('HelloWorld', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(78.24, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"The quick brown fox jumps over the lazy dog."', () => {
+      const metrics = measureText(
+        'The quick brown fox jumps over the lazy dog.',
+        {
+          fontFamily: 'Arial',
+          fontSize: 16,
+        }
+      );
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(321.05, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"今天天气真不错，适合出去走走。"', () => {
+      const metrics = measureText('今天天气真不错，适合出去走走。', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(240.0, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"Hello, 你好！World."', () => {
+      const metrics = measureText('Hello, 你好！World.', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(139.58, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"0123456789"', () => {
+      const metrics = measureText('0123456789', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(88.98, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"Price: $123.45"', () => {
+      const metrics = measureText('Price: $123.45', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(103.18, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
+      const metrics = measureText('!@#$%^&*()_+-=[]{}|;:,.<>?', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(188.89, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+
+    it('"Product价格: $99.99元"', () => {
+      const metrics = measureText('Product价格: $99.99元', {
+        fontFamily: 'Arial',
+        fontSize: 16,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(160.97, 1);
+      expect(metrics.height).toBeCloseTo(21.44, 1);
+    });
+  });
+
+  describe('[24px] [400]', () => {
+    it('"Hello World"', () => {
+      const metrics = measureText('Hello World', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(124.03, 1);
+      expect(metrics.height).toBeCloseTo(32.16, 1);
+    });
+
+    it('"Hello, World!"', () => {
+      const metrics = measureText('Hello, World!', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(137.37, 1);
+      expect(metrics.height).toBeCloseTo(32.16, 1);
+    });
+
+    it('"你好世界"', () => {
+      const metrics = measureText('你好世界', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(96.0, 1);
+      expect(metrics.height).toBeCloseTo(32.16, 1);
+    });
+
+    it('"你好，世界！"', () => {
+      const metrics = measureText('你好，世界！', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(144.0, 1);
+      expect(metrics.height).toBeCloseTo(32.16, 1);
+    });
+
+    it('"Hello 你好 World"', () => {
+      const metrics = measureText('Hello 你好 World', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(178.7, 1);
+      expect(metrics.height).toBeCloseTo(32.16, 1);
+    });
+  });
+
+  describe('[48px] [400]', () => {
+    it('"Hello World"', () => {
+      const metrics = measureText('Hello World', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(248.06, 1);
+      expect(metrics.height).toBeCloseTo(64.31, 1);
+    });
+
+    it('"Hello, World!"', () => {
+      const metrics = measureText('Hello, World!', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(274.73, 1);
+      expect(metrics.height).toBeCloseTo(64.31, 1);
+    });
+
+    it('"你好世界"', () => {
+      const metrics = measureText('你好世界', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(192.0, 1);
+      expect(metrics.height).toBeCloseTo(64.31, 1);
+    });
+
+    it('"你好，世界！"', () => {
+      const metrics = measureText('你好，世界！', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(288.0, 1);
+      expect(metrics.height).toBeCloseTo(64.31, 1);
+    });
+
+    it('"Hello 你好 World"', () => {
+      const metrics = measureText('Hello 你好 World', {
+        fontFamily: 'Arial',
+        fontSize: 48,
+      });
+
+      // 浏览器实际测量值 (from test-browser/index.html)
+      expect(metrics.width).toBeCloseTo(357.4, 1);
+      expect(metrics.height).toBeCloseTo(64.31, 1);
     });
   });
 });
