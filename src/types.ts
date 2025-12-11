@@ -3,12 +3,35 @@ export interface TextStyle {
   fontSize?: number;
   /** 字体 */
   fontFamily?: string;
-  /** 字重 */
+  /**
+   * 字重
+   * - thin/hairline 100
+   * - extra-light/ultra-light 200
+   * - light/lighter 300
+   * - regular/normal 400 (**default**)
+   * - medium 500
+   * - semi-bold/semibold/demi-bold/demibold 600
+   * - extra-bold/extrabold/ultra-bold/ultrabold 800
+   * - black/bolder/heavy 900
+   * - extra-black/extrablack 950
+   * - ultra-black/ultrablack 950
+   */
   fontWeight?: string | number;
-  /** 字体样式 */
-  fontStyle?: 'normal' | 'italic' | 'oblique';
-  /** 文本转换 */
-  textTransform?: 'none' | 'capitalize' | 'uppercase' | 'lowercase';
+  /**
+   * 字体样式
+   * - normal (**default**)
+   * - italic
+   * - oblique
+   */
+  fontStyle?: string;
+  /**
+   * 文本转换
+   * - none (**default**)
+   * - capitalize
+   * - uppercase
+   * - lowercase
+   */
+  textTransform?: string;
   /** 字间距 (px) - 额外增加到每个字符的 advance 之后 */
   letterSpacing?: number;
   /** 词间距 (px) - 额外增加到空格字符的 advance 之后 */

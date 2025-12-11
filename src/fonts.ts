@@ -125,7 +125,7 @@ function normalizeWeight(weight?: string | number): string {
 /**
  * 归一化字体样式
  */
-function normalizeStyle(style?: 'normal' | 'italic' | 'oblique'): string {
+function normalizeStyle(style?: string): string {
   return style || 'normal';
 }
 
@@ -194,7 +194,7 @@ export function setDefaultFontFamily(fontFamily: string): void {
 export function getFontData(
   family?: string,
   weight?: string | number,
-  style?: 'normal' | 'italic' | 'oblique'
+  style?: string
 ): FontData {
   const targetFamily = family || defaultFontFamily;
   const normalizedWeight = normalizeWeight(weight);
