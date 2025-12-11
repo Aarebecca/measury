@@ -1,6 +1,9 @@
 export interface TextStyle {
-  /** 字号 */
-  fontSize?: number;
+  /** 
+   * 字号
+   * string 值将被通过 parseFloat 转换为数字，单位默认为像素
+   */
+  fontSize?: number | string;
   /** 字体 */
   fontFamily?: string;
   /**

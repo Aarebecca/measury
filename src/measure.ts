@@ -28,11 +28,22 @@ function applyTextTransform(
   }
 }
 
+function normalizeFontSize(fontSize: number | string | undefined): number {
+  if (fontSize === undefined) {
+    return 14;
+  }
+  if (typeof fontSize === 'number') {
+    return fontSize;
+  }
+  const parsed = parseFloat(fontSize);
+  return isNaN(parsed) ? 16 : parsed;
+}
+
 /**
  * 计算行高
  */
 function calculateLineHeight(style: TextStyle, fontData: FontData): number {
-  const fontSize = style.fontSize || 16;
+  const fontSize = normalizeFontSize(style.fontSize);
   const lineHeight = style.lineHeight;
 
   if (lineHeight === undefined) {
@@ -71,7 +82,7 @@ export function measureText(text: string, style: TextStyle = {}): TextMetrics {
     style.fontWeight,
     style.fontStyle
   );
-  const fontSize = style.fontSize || 16;
+  const fontSize = normalizeFontSize(style.fontSize);
   const letterSpacing = style.letterSpacing || 0;
   const wordSpacing = style.wordSpacing || 0;
 
