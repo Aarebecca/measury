@@ -1,13 +1,14 @@
 #!/usr/bin/env tsx
 /**
- * TTF 字体数据提取脚本
+ * TTF/OTF/TTC 字体数据提取脚本
  * 
  * 使用方法:
- *   npm run extract <ttf-file-path> [output-file-path]
+ *   npm run extract <font-file-path> [output-file-path]
  * 
  * 示例:
  *   npm run extract fonts/Roboto-Regular.ttf
  *   npm run extract fonts/Roboto-Regular.ttf src/fonts/roboto.ts
+ *   npm run extract fonts/SourceHanSans.ttc --ttc-index 2
  */
 
 import * as fs from 'fs';
@@ -34,6 +35,8 @@ interface ExtractOptions {
   extractedFontFamily?: string;
   /** 是否只提取常用 Unicode 区块（默认 true） */
   useCommonBlocksOnly?: boolean;
+  /** TTC/TTF 集合中的字体索引（0-based） */
+  ttcIndex?: number;
 }
 
 /**
@@ -90,6 +93,179 @@ const COMMON_UNICODE_BLOCKS = [
   { start: 0x1F900, end: 0x1F9FF, name: 'Supplemental Symbols and Pictographs' },
 ];
 
+interface TtcInfo {
+  index: number;
+  count: number;
+}
+
+interface TableEntry {
+  tag: string;
+  checkSum: number;
+  offset: number;
+  length: number;
+}
+
+interface TableDirectory {
+  sfntVersion: number;
+  numTables: number;
+  searchRange: number;
+  entrySelector: number;
+  rangeShift: number;
+  tables: TableEntry[];
+}
+
+function toArrayBuffer(buffer: Buffer): ArrayBuffer {
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+}
+
+function readTag(data: DataView, offset: number): string {
+  return String.fromCharCode(
+    data.getUint8(offset),
+    data.getUint8(offset + 1),
+    data.getUint8(offset + 2),
+    data.getUint8(offset + 3)
+  );
+}
+
+function writeTag(view: DataView, offset: number, tag: string): void {
+  for (let i = 0; i < 4; i++) {
+    view.setUint8(offset + i, tag.charCodeAt(i) || 0);
+  }
+}
+
+function align4(value: number): number {
+  return (value + 3) & ~3;
+}
+
+function parseTableDirectory(data: DataView, fontOffset: number): TableDirectory {
+  const sfntVersion = data.getUint32(fontOffset, false);
+  const numTables = data.getUint16(fontOffset + 4, false);
+  const searchRange = data.getUint16(fontOffset + 6, false);
+  const entrySelector = data.getUint16(fontOffset + 8, false);
+  const rangeShift = data.getUint16(fontOffset + 10, false);
+
+  const tables: TableEntry[] = [];
+  let recordOffset = fontOffset + 12;
+  for (let i = 0; i < numTables; i++) {
+    const tag = readTag(data, recordOffset);
+    const checkSum = data.getUint32(recordOffset + 4, false);
+    const offset = data.getUint32(recordOffset + 8, false);
+    const length = data.getUint32(recordOffset + 12, false);
+    tables.push({ tag, checkSum, offset, length });
+    recordOffset += 16;
+  }
+
+  return {
+    sfntVersion,
+    numTables,
+    searchRange,
+    entrySelector,
+    rangeShift,
+    tables,
+  };
+}
+
+function detectTtcTableOffsetBase(data: DataView, fontOffset: number, tables: TableEntry[], bufferLength: number): number {
+  const headEntry = tables.find((table) => table.tag === 'head');
+  const isHeadVersion = (value: number | null) => value === 0x00010000 || value === 0x00020000;
+
+  if (headEntry) {
+    const absOffset = headEntry.offset;
+    const relOffset = fontOffset + headEntry.offset;
+    const absValid = absOffset + headEntry.length <= bufferLength;
+    const relValid = relOffset + headEntry.length <= bufferLength;
+    const absVersion = absValid ? data.getUint32(absOffset, false) : null;
+    const relVersion = relValid ? data.getUint32(relOffset, false) : null;
+
+    if (isHeadVersion(absVersion) && !isHeadVersion(relVersion)) {
+      return 0;
+    }
+    if (!isHeadVersion(absVersion) && isHeadVersion(relVersion)) {
+      return fontOffset;
+    }
+  }
+
+  return 0;
+}
+
+function buildSfntBuffer(data: DataView, directory: TableDirectory, offsetBase: number): ArrayBuffer {
+  let cursor = 12 + directory.numTables * 16;
+  const tablesWithOffsets = directory.tables.map((table) => {
+    cursor = align4(cursor);
+    const newOffset = cursor;
+    cursor += table.length;
+    return { ...table, newOffset };
+  });
+
+  const output = new ArrayBuffer(cursor);
+  const view = new DataView(output);
+  view.setUint32(0, directory.sfntVersion, false);
+  view.setUint16(4, directory.numTables, false);
+  view.setUint16(6, directory.searchRange, false);
+  view.setUint16(8, directory.entrySelector, false);
+  view.setUint16(10, directory.rangeShift, false);
+
+  let recordOffset = 12;
+  for (const table of tablesWithOffsets) {
+    writeTag(view, recordOffset, table.tag);
+    view.setUint32(recordOffset + 4, table.checkSum, false);
+    view.setUint32(recordOffset + 8, table.newOffset, false);
+    view.setUint32(recordOffset + 12, table.length, false);
+    recordOffset += 16;
+  }
+
+  const source = new Uint8Array(data.buffer);
+  const target = new Uint8Array(output);
+  for (const table of tablesWithOffsets) {
+    const sourceOffset = offsetBase + table.offset;
+    if (sourceOffset + table.length > source.length) {
+      throw new Error(`Table ${table.tag} exceeds TTC buffer bounds`);
+    }
+    target.set(source.subarray(sourceOffset, sourceOffset + table.length), table.newOffset);
+  }
+
+  return output;
+}
+
+function extractTtcFont(buffer: ArrayBuffer, ttcIndex?: number): { fontBuffer: ArrayBuffer; ttcInfo: TtcInfo } {
+  const data = new DataView(buffer);
+  const signature = readTag(data, 0);
+  if (signature !== 'ttcf') {
+    throw new Error(`Unsupported TTC signature: ${signature}`);
+  }
+
+  const count = data.getUint32(8, false);
+  if (count < 1) {
+    throw new Error('TTC file contains no fonts');
+  }
+
+  const index = ttcIndex ?? 0;
+  if (!Number.isInteger(index) || index < 0 || index >= count) {
+    throw new Error(`Invalid TTC index ${index}; expected 0-${count - 1}`);
+  }
+
+  const fontOffset = data.getUint32(12 + index * 4, false);
+  const directory = parseTableDirectory(data, fontOffset);
+  const offsetBase = detectTtcTableOffsetBase(data, fontOffset, directory.tables, buffer.byteLength);
+  const fontBuffer = buildSfntBuffer(data, directory, offsetBase);
+
+  return { fontBuffer, ttcInfo: { index, count } };
+}
+
+function loadFont(input: string, ttcIndex?: number): { font: opentype.Font; ttcInfo?: TtcInfo } {
+  const buffer = fs.readFileSync(input);
+  const arrayBuffer = toArrayBuffer(buffer);
+  const data = new DataView(arrayBuffer);
+  const signature = readTag(data, 0);
+
+  if (signature === 'ttcf') {
+    const { fontBuffer, ttcInfo } = extractTtcFont(arrayBuffer, ttcIndex);
+    return { font: opentype.parse(fontBuffer), ttcInfo };
+  }
+
+  return { font: opentype.parse(arrayBuffer) };
+}
+
 /**
  * 将字符列表转换为优化的 Unicode 范围
  * @param charsByWidth 按宽度分组的字符映射
@@ -102,8 +278,13 @@ function extractFontData(options: ExtractOptions): { code: string; warning: stri
   const { input, includeKerning = true, charset } = options;
 
   // 读取字体文件
-  const buffer = fs.readFileSync(input);
-  const font = opentype.parse(buffer.buffer);
+  const { font, ttcInfo } = loadFont(input, options.ttcIndex);
+  if (ttcInfo) {
+    const indexNote = options.ttcIndex === undefined && ttcInfo.count > 1
+      ? ' (defaulting to index 0)'
+      : '';
+    console.log(`✓ TTC collection detected: ${ttcInfo.count} fonts, using index ${ttcInfo.index}${indexNote}`);
+  }
 
   // 获取字体元数据
   // 如果用户没有指定 fontFamily，则从字体文件中提取
@@ -595,19 +776,20 @@ function generateFileName(fontFamily: string, fontWeight: string | number, fontS
  */
 function main() {
   const argv = minimist(process.argv.slice(2), {
-    string: ['weight', 'family', 'charset', 'output'],
+    string: ['weight', 'family', 'charset', 'output', 'style', 'ttc-index'],
     boolean: ['no-kerning', 'no-common-blocks', 'help'],
     alias: {
       w: 'weight',
       f: 'family',
       c: 'charset',
       o: 'output',
+      i: 'ttc-index',
       h: 'help',
     },
   });
 
   if (argv.help || argv._.length === 0) {
-    console.log('Usage: npm run extract <ttf-file> [options]');
+    console.log('Usage: npm run extract <font-file> [options]');
     console.log('');
     console.log('Options:');
     console.log('  -w, --weight <weight>         Set font weight (e.g., 400, bold)');
@@ -615,6 +797,7 @@ function main() {
     console.log('  -f, --family <name>           Override font family name');
     console.log('  -c, --charset <chars>         Only extract specified characters');
     console.log('  -o, --output <file>           Output file path');
+    console.log('  -i, --ttc-index <index>       Font index for .ttc/.ttcf files (0-based)');
     console.log('  --no-kerning                  Skip kerning data extraction');
     console.log('  --no-common-blocks            Extract all Unicode blocks (not recommended)');
     console.log('  -h, --help                    Show this help message');
@@ -625,10 +808,18 @@ function main() {
     console.log('  npm run extract fonts/Arial.ttf --weight 400 --charset "ABC123"');
     console.log('  npm run extract fonts/Roboto-Italic.ttf --style italic');
     console.log('  npm run extract fonts/Font.ttf --no-kerning');
+    console.log('  npm run extract fonts/SourceHanSans.ttc --ttc-index 2');
     process.exit(argv.help ? 0 : 1);
   }
 
   const input = argv._[0];
+  const ttcIndexRaw = argv['ttc-index'];
+  const ttcIndex = ttcIndexRaw !== undefined ? Number(ttcIndexRaw) : undefined;
+
+  if (ttcIndexRaw !== undefined && (!Number.isFinite(ttcIndex) || !Number.isInteger(ttcIndex))) {
+    console.error(`Error: Invalid --ttc-index value: ${ttcIndexRaw}`);
+    process.exit(1);
+  }
   
   const options: ExtractOptions = {
     input,
@@ -639,6 +830,7 @@ function main() {
     charset: argv.charset,
     includeKerning: !argv['no-kerning'],
     useCommonBlocksOnly: !argv['no-common-blocks'],
+    ttcIndex,
   };
 
   // 检查输入文件是否存在
@@ -722,8 +914,6 @@ function updateFontsIndex(fontFilePath: string, fontFamily: string, fontWeight: 
 }
 
 // 运行主函数
-if (require.main === module) {
-  main();
-}
+main();
 
 export { extractFontData, ExtractOptions };
