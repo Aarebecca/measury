@@ -6,6 +6,7 @@ import type { FontData } from '../types';
  */
 export default {
   fontFamily: 'Alibaba PuHuiTi',
+  aliases: ['AlibabaPuHuiTi', 'AlibabaPuHuiTi-Regular'],
   fontWeight: 400,
   fontStyle: 'normal',
   unitsPerEm: 1000,

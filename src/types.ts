@@ -1,5 +1,5 @@
 export interface TextStyle {
-  /** 
+  /**
    * 字号
    * string 值将被通过 parseFloat 转换为数字，单位默认为像素
    */
@@ -59,6 +59,8 @@ export interface TextMetrics {
 
 export interface FontData {
   fontFamily: string;
+  /** 字体别名（可选） */
+  aliases?: string[];
   /** 字重 */
   fontWeight: string | number;
   /** 字体样式 */

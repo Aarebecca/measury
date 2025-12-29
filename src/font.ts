@@ -2,9 +2,16 @@ import type { FontData } from './types';
 
 // 字体注册表：family -> weight -> style -> FontData
 const fontRegistry = new Map<string, Map<string, Map<string, FontData>>>();
+const fontAliases = new Map<string, string>();
 
 // 默认字体
 let defaultFontFamily = 'sans-serif';
+
+function resolveFontFamily(family: string): string {
+  if (!family) return family;
+  if (fontRegistry.has(family)) return family;
+  return fontAliases.get(family) || family;
+}
 
 /**
  * 通用降级字体数据
@@ -137,6 +144,14 @@ export function registerFont(data: FontData): void {
   const normalizedWeight = normalizeWeight(data.fontWeight);
   const normalizedStyle = normalizeStyle(data.fontStyle);
 
+  if (data.aliases) {
+    for (const alias of data.aliases) {
+      if (!fontAliases.has(alias)) {
+        fontAliases.set(alias, family);
+      }
+    }
+  }
+
   // 如果使用了 glyphsByWidth 压缩格式，需要展开到 glyphs
   if (data.glyphsByWidth) {
     const expandedGlyphs: Record<string, number> = { ...(data.glyphs || {}) };
@@ -196,7 +211,7 @@ export function getFontData(
   weight?: string | number,
   style?: string
 ): FontData {
-  const targetFamily = family || defaultFontFamily;
+  const targetFamily = resolveFontFamily(family || defaultFontFamily);
   const normalizedWeight = normalizeWeight(weight);
   const normalizedStyle = normalizeStyle(style);
 

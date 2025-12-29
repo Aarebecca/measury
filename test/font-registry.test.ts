@@ -103,6 +103,25 @@ describe('Font Management', () => {
       expect(fontData.glyphs).toBeDefined();
     });
 
+    it('should resolve font family aliases', () => {
+      const font = {
+        fontFamily: 'Alias Family',
+        aliases: ['AliasFamily', 'AliasFamily-Regular'],
+        fontWeight: 400,
+        unitsPerEm: 1000,
+        metrics: { ascender: 800, descender: -200 },
+        glyphs: { A: 520 },
+      };
+
+      registerFont(font);
+
+      const noSpace = getFontData('AliasFamily', 400);
+      const withSuffix = getFontData('AliasFamily-Regular', 400);
+
+      expect(noSpace.fontFamily).toBe('Alias Family');
+      expect(withSuffix.fontFamily).toBe('Alias Family');
+    });
+
     it('should normalize weight names', () => {
       const font = {
         fontFamily: 'NormalizeTest',

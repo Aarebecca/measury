@@ -109,6 +109,15 @@ import MyFont from 'measury/myfont';
 registerFont(MyFont);
 ```
 
+支持在字体数据中声明别名：
+
+```typescript
+registerFont({
+  ...MyFont,
+  aliases: ['AlibabaPuHuiTi', 'AlibabaPuHuiTi-Regular'],
+});
+```
+
 ### `setDefaultFontFamily(fontFamily)`
 
 设置默认字体族。
@@ -265,5 +274,3 @@ npm run dev
 ## 📄 许可证
 
 MIT
-
-
