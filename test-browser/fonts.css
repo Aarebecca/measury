@@ -41,4 +41,101 @@
   font-style: normal;
   font-display: swap;
 }
-
+@font-face {
+  font-family: 'Comic Sans MS';
+  src: url('./fonts/ComicSansMS.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Georgia';
+  src: url('./fonts/Georgia.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('./fonts/HelveticaNeue.ttc') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Menlo';
+  src: url('./fonts/Menlo.ttc') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Microsoft YaHei';
+  src: url('./fonts/MicrosoftYahei.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Monaco';
+  src: url('./fonts/Monaco.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PingFang SC';
+  src: url('./fonts/PingFang-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('./fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('./fonts/SegoeUI.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SimHei';
+  src: url('./fonts/SimHei.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SimSun';
+  src: url('./fonts/SimSun.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Times New Roman';
+  src: url('./fonts/TimesNewRoman.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Times';
+  src: url('./fonts/Times.ttc') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

@@ -6,6 +6,7 @@ import type { FontData } from '../types';
  */
 export default {
   fontFamily: 'Source Han Serif',
+  langs: ['chinese'],
   fontWeight: 400,
   fontStyle: 'normal',
   unitsPerEm: 1000,

@@ -6,6 +6,7 @@ import type { FontData } from '../types';
  */
 export default {
   fontFamily: 'LXGW WenKai',
+  langs: ['chinese'],
   fontWeight: 400,
   fontStyle: 'normal',
   unitsPerEm: 1000,

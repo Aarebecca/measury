@@ -277,7 +277,7 @@
   <div class="test-section">
     <h2>自定义测试</h2>
     <div>
-      <label>文本内容：<input type="text" id="customText" value="Hello World" style="width: 300px; padding: 5px;"></label>
+      <label>文本内容：<input type="text" id="customText" value=" 你好世界！Hello World!" style="width: 300px; padding: 5px;"></label>
     </div>
     <div style="margin-top: 10px;">
       <label>字体：
@@ -488,14 +488,126 @@
     // 标准字号
     const standardFontSizes = [12, 16, 24, 48];
 
+    const chineseSampleText = '你好';
+    const chineseFallbackCandidates = [
+      'Source Han Sans',
+      'Source Han Serif',
+      'SimHei',
+      'SimSun',
+      'Microsoft YaHei',
+      'PingFang SC',
+      'PingFang',
+      'Alibaba PuHuiTi',
+      'LXGW WenKai',
+      '851tegakizatsu',
+    ];
+    const knownChineseFonts = new Set(chineseFallbackCandidates);
+    const nonChineseFonts = new Set([
+      'Arial',
+      'Comic Sans MS',
+      'Georgia',
+      'Helvetica Neue',
+      'Menlo',
+      'Monaco',
+      'Roboto',
+      'SF Pro',
+      'Segoe UI',
+      'Times',
+      'Times New Roman',
+    ]);
+    const chineseSupportCache = new Map();
+    const glyphCanvas = document.createElement('canvas');
+    glyphCanvas.width = 200;
+    glyphCanvas.height = 80;
+    const glyphCtx = glyphCanvas.getContext('2d');
+
+    function pickChineseFallbackFonts(fontFamily, availableFonts, count = 2) {
+      const availableSet = new Set(availableFonts);
+      const fallbacks = [];
+      for (const candidate of chineseFallbackCandidates) {
+        if (candidate !== fontFamily && availableSet.has(candidate)) {
+          fallbacks.push(candidate);
+          if (fallbacks.length >= count) {
+            break;
+          }
+        }
+      }
+      return fallbacks;
+    }
+
+    function measureChineseWidth(fontStack) {
+      if (!glyphCtx) {
+        return NaN;
+      }
+
+      glyphCtx.font = `32px ${fontStack}`;
+      return glyphCtx.measureText(chineseSampleText).width;
+    }
+
+    async function supportsChinese(fontFamily, availableFonts) {
+      if (chineseSupportCache.has(fontFamily)) {
+        return chineseSupportCache.get(fontFamily);
+      }
+
+      if (knownChineseFonts.has(fontFamily)) {
+        chineseSupportCache.set(fontFamily, true);
+        return true;
+      }
+
+      if (nonChineseFonts.has(fontFamily)) {
+        chineseSupportCache.set(fontFamily, false);
+        return false;
+      }
+
+      let fallbackFonts = pickChineseFallbackFonts(fontFamily, availableFonts, 1);
+
+      if (fallbackFonts.length === 0) {
+        chineseSupportCache.set(fontFamily, false);
+        return false;
+      }
+
+      if ('fonts' in document) {
+        const loadTargets = [`16px "${fontFamily}"`, ...fallbackFonts.map(font => `16px "${font}"`)];
+        try {
+          await Promise.all(loadTargets.map(target => document.fonts.load(target, chineseSampleText)));
+        } catch (e) {
+          console.warn('字体检测加载失败:', e);
+        }
+
+        fallbackFonts = fallbackFonts.filter(font =>
+          document.fonts.check(`16px "${font}"`, chineseSampleText)
+        );
+      }
+
+      if (fallbackFonts.length === 0) {
+        chineseSupportCache.set(fontFamily, false);
+        return false;
+      }
+
+      const fallbackFont = fallbackFonts[0];
+      const widthA = measureChineseWidth(`"${fontFamily}", "${fallbackFont}"`);
+
+      if (!Number.isFinite(widthA) || widthA <= 0) {
+        chineseSupportCache.set(fontFamily, false);
+        return false;
+      }
+
+      const fallbackWidth = measureChineseWidth(`"${fallbackFont}"`);
+      const supported = Number.isFinite(fallbackWidth) && Math.abs(widthA - fallbackWidth) > 0.1;
+
+      chineseSupportCache.set(fontFamily, supported);
+      return supported;
+    }
+
     // 动态生成测试用例（基于已加载的字体）
-    function generateTestCases() {
+    async function generateTestCases() {
       const cases = [];
 
       // 获取所有已加载的字体
       const fonts = Array.from(document.getElementById('customFont').options).map(opt => opt.value);
 
-      fonts.forEach(font => {
+      for (const font of fonts) {
+        const hasChinese = await supportsChinese(font, fonts);
         // 为每个字体生成标准测试用例
         standardFontSizes.forEach(fontSize => {
           // 基础测试（常用场景）
@@ -511,23 +623,25 @@
             style: { fontFamily: font, fontSize, fontWeight: 400 }
           });
 
-          cases.push({
-            name: `${font} [${fontSize}px] - 纯中文`,
-            text: standardTexts.pureChinese,
-            style: { fontFamily: font, fontSize, fontWeight: 400 }
-          });
+          if (hasChinese) {
+            cases.push({
+              name: `${font} [${fontSize}px] - 纯中文`,
+              text: standardTexts.pureChinese,
+              style: { fontFamily: font, fontSize, fontWeight: 400 }
+            });
 
-          cases.push({
-            name: `${font} [${fontSize}px] - 纯中文带标点`,
-            text: standardTexts.chineseWithPunctuation,
-            style: { fontFamily: font, fontSize, fontWeight: 400 }
-          });
+            cases.push({
+              name: `${font} [${fontSize}px] - 纯中文带标点`,
+              text: standardTexts.chineseWithPunctuation,
+              style: { fontFamily: font, fontSize, fontWeight: 400 }
+            });
 
-          cases.push({
-            name: `${font} [${fontSize}px] - 中英混排带空格`,
-            text: standardTexts.mixedWithSpaces,
-            style: { fontFamily: font, fontSize, fontWeight: 400 }
-          });
+            cases.push({
+              name: `${font} [${fontSize}px] - 中英混排带空格`,
+              text: standardTexts.mixedWithSpaces,
+              style: { fontFamily: font, fontSize, fontWeight: 400 }
+            });
+          }
 
           // 仅在 16px 时测试更多场景（避免测试用例过多）
           if (fontSize === 16) {
@@ -543,17 +657,19 @@
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
 
-            cases.push({
-              name: `${font} [${fontSize}px] - 中文句子`,
-              text: standardTexts.chineseSentence,
-              style: { fontFamily: font, fontSize, fontWeight: 400 }
-            });
+            if (hasChinese) {
+              cases.push({
+                name: `${font} [${fontSize}px] - 中文句子`,
+                text: standardTexts.chineseSentence,
+                style: { fontFamily: font, fontSize, fontWeight: 400 }
+              });
 
-            cases.push({
-              name: `${font} [${fontSize}px] - 中英混排带标点`,
-              text: standardTexts.mixedWithPunctuation,
-              style: { fontFamily: font, fontSize, fontWeight: 400 }
-            });
+              cases.push({
+                name: `${font} [${fontSize}px] - 中英混排带标点`,
+                text: standardTexts.mixedWithPunctuation,
+                style: { fontFamily: font, fontSize, fontWeight: 400 }
+              });
+            }
 
             cases.push({
               name: `${font} [${fontSize}px] - 数字`,
@@ -573,60 +689,22 @@
               style: { fontFamily: font, fontSize, fontWeight: 400 }
             });
 
-            cases.push({
-              name: `${font} [${fontSize}px] - 综合测试`,
-              text: standardTexts.comprehensive,
-              style: { fontFamily: font, fontSize, fontWeight: 400 }
-            });
+            if (hasChinese) {
+              cases.push({
+                name: `${font} [${fontSize}px] - 综合测试`,
+                text: standardTexts.comprehensive,
+                style: { fontFamily: font, fontSize, fontWeight: 400 }
+              });
+            }
           }
         });
-      });
+      }
 
       return cases;
     }
 
     // 初始测试用例（在字体加载完成前使用）
     let testCases = [];
-
-    // 字体的完整 metrics 映射（与代码库保持一致）
-    const fontMetrics = {
-      Arial: {
-        ascender: 2189,
-        descender: -555,
-        lineGap: 0,
-        unitsPerEm: 2048,
-      },
-      'Alibaba PuHuiTi': {
-        ascender: 1060,
-        descender: -340,
-        lineGap: 0,
-        unitsPerEm: 1000
-      },
-      'Source Han Sans': {
-        ascender: 880,
-        descender: -120,
-        lineGap: 500,
-        unitsPerEm: 1000
-      },
-      'Source Han Serif': {
-        ascender: 1151,
-        descender: -286,
-        lineGap: 0,
-        unitsPerEm: 1000
-      },
-      'LXGW WenKai': {
-        ascender: 928,
-        descender: -256,
-        lineGap: 0,
-        unitsPerEm: 1000
-      },
-      '851tegakizatsu': {
-        ascender: 880,
-        descender: -144,
-        lineGap: 0,
-        unitsPerEm: 1024
-      },
-    };
 
     async function measureText(text, style) {
       // 等待字体加载完成
@@ -800,7 +878,7 @@ beforeAll(() => {
 
     async function runAllTests() {
       // 生成标准化测试用例
-      testCases = generateTestCases();
+      testCases = await generateTestCases();
 
       if (testCases.length === 0) {
         alert('没有可用的字体，请确保字体已加载！');
