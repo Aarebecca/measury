@@ -1,6 +1,6 @@
 {
   "name": "measury",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A lightweight library for estimating text width and height in non-browser environments",
   "type": "module",
   "main": "lib/index.js",
@@ -8,7 +8,8 @@
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
-      "import": "./lib/index.js"
+      "import": "./lib/index.js",
+      "default": "./lib/index.js"
     },
     "./fonts/*": {
       "types": "./lib/fonts/*.d.ts",
