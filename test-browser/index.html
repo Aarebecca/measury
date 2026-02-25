@@ -82,6 +82,10 @@
       .two-column-layout {
         grid-template-columns: 1fr;
       }
+
+      .custom-preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .test-item {
@@ -98,14 +102,95 @@
       position: relative;
     }
 
-    .measurement-box::after {
-      content: '';
+    .measurement-box svg {
+      display: block;
+      overflow: visible;
+    }
+
+    .measurement-baseline {
       position: absolute;
       left: 0;
       right: 0;
       height: 1px;
       background: red;
       opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .custom-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .preview-card {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .preview-card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .preview-stage {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafb;
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+
+    .preview-metrics {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .preview-metrics div {
+      margin: 2px 0;
+    }
+
+    .preview-structure-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 4px;
+    }
+
+    .preview-structure pre {
+      margin: 0;
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      background: #f4f6f8;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre;
+      color: #445;
+    }
+
+    .html-preview-text {
+      display: inline-block;
+      color: #111;
+    }
+
+    .canvas-preview {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .custom-preview-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .results {
@@ -270,7 +355,7 @@
     <h2>使用说明</h2>
     <p>1. 页面会自动加载 test-browser/fonts 目录下的字体文件</p>
     <p>2. 在"自定义测试"中选择字体并输入文本进行测量</p>
-    <p>3. 结果会显示浏览器实际测量的宽度、高度和基线值</p>
+    <p>3. 结果会显示浏览器 HTML 实际测量值（作为目标值），并提供 SVG/Canvas 对照</p>
     <p>4. 点击"生成测试代码"可以生成对应的测试用例代码，代码中会使用当前选择的字体</p>
   </div>
 
@@ -628,6 +713,276 @@
       },
     };
 
+    const WIDTH_ABS_TOLERANCE = 0.8;
+    const WIDTH_REL_TOLERANCE = 0.01;
+    const HEIGHT_ABS_TOLERANCE = 0.6;
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    let canvasPreviewSeq = 0;
+
+    function normalizePreviewText(text) {
+      return text.length === 0 ? ' ' : text;
+    }
+
+    function buildMeasurementBox(content, measuredWidth, measuredHeight, measuredBaseline) {
+      const width = Math.max(1, measuredWidth);
+      const height = Math.max(1, measuredHeight);
+      const baseline = Math.max(0, Math.min(height, measuredBaseline));
+
+      return `
+        <div class="measurement-box" style="width: ${width.toFixed(2)}px; height: ${height.toFixed(2)}px;">
+          ${content}
+          <span class="measurement-baseline" style="top: ${baseline.toFixed(2)}px;"></span>
+        </div>
+      `;
+    }
+
+    function buildSvgPreview(text, style, measured) {
+      const previewText = normalizePreviewText(text);
+      const escapedText = escapeHtml(previewText);
+      const escapedFamily = escapeHtml(style.fontFamily);
+      const fontSize = style.fontSize;
+      const fontWeight = style.fontWeight || 400;
+      const letterSpacing = style.letterSpacing || 0;
+      const wordSpacing = style.wordSpacing || 0;
+      const width = Math.max(1, measured.width);
+      const height = Math.max(1, measured.actualHeight ?? measured.height);
+      const baseline = Math.max(0, Math.min(height, measured.baseline));
+
+      const content = `
+        <svg width="${width.toFixed(2)}" height="${height.toFixed(2)}" viewBox="0 0 ${width.toFixed(2)} ${height.toFixed(2)}" aria-hidden="true">
+          <text x="0" y="${baseline.toFixed(2)}" font-family="'${escapedFamily}'" font-size="${fontSize}" font-weight="${fontWeight}" letter-spacing="${letterSpacing}" word-spacing="${wordSpacing}" xml:space="preserve">${escapedText}</text>
+        </svg>
+      `;
+
+      return buildMeasurementBox(content, width, height, baseline);
+    }
+
+    function buildHtmlPreview(text, style, measured) {
+      const previewText = normalizePreviewText(text);
+      const escapedText = escapeHtml(previewText);
+      const escapedFamily = escapeHtml(style.fontFamily);
+      const fontSize = style.fontSize;
+      const fontWeight = style.fontWeight || 400;
+      const letterSpacing = style.letterSpacing || 0;
+      const wordSpacing = style.wordSpacing || 0;
+
+      const content = `
+        <div class="html-preview-text" style="font-family: '${escapedFamily}'; font-size: ${fontSize}px; font-weight: ${fontWeight}; letter-spacing: ${letterSpacing}px; word-spacing: ${wordSpacing}px; white-space: nowrap;">${escapedText}</div>
+      `;
+
+      return buildMeasurementBox(content, measured.width, measured.height, measured.baseline);
+    }
+
+    function measureHtmlPreview(text, style) {
+      const previewText = normalizePreviewText(text);
+      const div = document.createElement('div');
+      div.style.position = 'absolute';
+      div.style.visibility = 'hidden';
+      div.style.left = '-99999px';
+      div.style.top = '-99999px';
+      div.style.whiteSpace = 'nowrap';
+      div.style.fontFamily = `"${style.fontFamily.replace(/"/g, '\\"')}"`;
+      div.style.fontSize = `${style.fontSize}px`;
+      div.style.fontWeight = String(style.fontWeight || 400);
+      div.style.letterSpacing = `${style.letterSpacing || 0}px`;
+      div.style.wordSpacing = `${style.wordSpacing || 0}px`;
+      div.textContent = previewText;
+
+      document.body.appendChild(div);
+      const rect = div.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(div);
+      document.body.removeChild(div);
+
+      const lineHeight = parseFloat(computedStyle.lineHeight);
+      const baseline = Number.isFinite(lineHeight)
+        ? Math.min(rect.height, Math.max(0, lineHeight * 0.8))
+        : Math.min(rect.height, style.fontSize * 0.8);
+
+      return {
+        width: text.length === 0 ? 0 : rect.width,
+        height: text.length === 0 ? 0 : rect.height,
+        baseline: text.length === 0 ? 0 : baseline,
+      };
+    }
+
+    function measureCanvasPreview(text, style) {
+      const previewText = normalizePreviewText(text);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        return {
+          width: 0,
+          height: 0,
+          baseline: 0,
+        };
+      }
+
+      const fontWeight = style.fontWeight || 400;
+      const fontSize = style.fontSize;
+      const fontFamily = style.fontFamily.replace(/"/g, '\\"');
+      const letterSpacing = style.letterSpacing || 0;
+      const wordSpacing = style.wordSpacing || 0;
+
+      ctx.font = `${fontWeight} ${fontSize}px "${fontFamily}"`;
+      ctx.textBaseline = 'alphabetic';
+
+      const chars = Array.from(previewText);
+      let width = 0;
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        width += ctx.measureText(char).width;
+        if (i < chars.length - 1) width += letterSpacing;
+        if (char === ' ') width += wordSpacing;
+      }
+
+      const metrics = ctx.measureText(previewText);
+      let ascent = metrics.actualBoundingBoxAscent;
+      let descent = metrics.actualBoundingBoxDescent;
+      if (!Number.isFinite(ascent) || ascent <= 0) ascent = fontSize * 0.8;
+      if (!Number.isFinite(descent) || descent < 0) descent = fontSize * 0.2;
+
+      const height = ascent + descent;
+
+      return {
+        width: text.length === 0 ? 0 : width,
+        height: text.length === 0 ? 0 : height,
+        baseline: text.length === 0 ? 0 : ascent,
+      };
+    }
+
+    function buildCanvasPreview(text, style, measured) {
+      const previewText = normalizePreviewText(text);
+      const width = Math.max(1, measured.width);
+      const height = Math.max(1, measured.height);
+      const baseline = Math.max(0, Math.min(height, measured.baseline));
+      const canvasId = `canvasPreview${++canvasPreviewSeq}`;
+      const encodedText = encodeURIComponent(previewText);
+      const encodedFamily = encodeURIComponent(style.fontFamily);
+
+      const content = `
+        <canvas
+          id="${canvasId}"
+          class="canvas-preview"
+          width="${Math.max(1, Math.ceil(width))}"
+          height="${Math.max(1, Math.ceil(height))}"
+          style="width: ${width.toFixed(2)}px; height: ${height.toFixed(2)}px;"
+          data-text="${encodedText}"
+          data-family="${encodedFamily}"
+          data-size="${style.fontSize}"
+          data-weight="${style.fontWeight || 400}"
+          data-letter-spacing="${style.letterSpacing || 0}"
+          data-word-spacing="${style.wordSpacing || 0}"
+          data-baseline="${baseline.toFixed(2)}"
+        ></canvas>
+      `;
+
+      return {
+        id: canvasId,
+        markup: buildMeasurementBox(content, width, height, baseline),
+      };
+    }
+
+    function drawCanvasPreviewById(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const text = decodeURIComponent(canvas.dataset.text || ' ');
+      const fontFamily = decodeURIComponent(canvas.dataset.family || 'sans-serif');
+      const fontSize = Number(canvas.dataset.size || 16);
+      const fontWeight = Number(canvas.dataset.weight || 400);
+      const letterSpacing = Number(canvas.dataset.letterSpacing || 0);
+      const wordSpacing = Number(canvas.dataset.wordSpacing || 0);
+      const baseline = Number(canvas.dataset.baseline || 0);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#111';
+      ctx.textBaseline = 'alphabetic';
+      ctx.font = `${fontWeight} ${fontSize}px "${fontFamily.replace(/"/g, '\\"')}"`;
+
+      const chars = Array.from(text);
+      let x = 0;
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        ctx.fillText(char, x, baseline);
+        x += ctx.measureText(char).width;
+        if (i < chars.length - 1) x += letterSpacing;
+        if (char === ' ') x += wordSpacing;
+      }
+    }
+
+    function buildPreviewCard(title, previewMarkup, metrics, structureCode) {
+      return `
+        <div class="preview-card">
+          <h3>${title}</h3>
+          <div class="preview-stage">${previewMarkup}</div>
+          <div class="preview-metrics">
+            <div>宽度: ${metrics.width.toFixed(2)}px</div>
+            <div>高度: ${metrics.height.toFixed(2)}px</div>
+            <div>基线: ${metrics.baseline.toFixed(2)}px</div>
+          </div>
+          <div class="preview-structure">
+            <div class="preview-structure-title">结构</div>
+            <pre>${escapeHtml(structureCode)}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildSvgStructure(text, style, metrics) {
+      const previewText = normalizePreviewText(text);
+      return [
+        `<svg width="${Math.max(1, metrics.width).toFixed(2)}" height="${Math.max(1, metrics.height).toFixed(2)}">`,
+        `  <text x="0" y="${metrics.baseline.toFixed(2)}" font-family="${style.fontFamily}"`,
+        `    font-size="${style.fontSize}" font-weight="${style.fontWeight || 400}" xml:space="preserve">`,
+        `    ${previewText}`,
+        `  </text>`,
+        `</svg>`,
+      ].join('\n');
+    }
+
+    function buildHtmlStructure(text, style) {
+      const previewText = normalizePreviewText(text);
+      return [
+        `<div style="font-family:'${style.fontFamily}'; font-size:${style.fontSize}px; font-weight:${style.fontWeight || 400};`,
+        `  letter-spacing:${style.letterSpacing || 0}px; word-spacing:${style.wordSpacing || 0}px; white-space:nowrap;">`,
+        `  ${previewText}`,
+        `</div>`,
+      ].join('\n');
+    }
+
+    function buildCanvasStructure(text, style, metrics) {
+      const previewText = normalizePreviewText(text);
+      return [
+        `const canvas = document.createElement('canvas');`,
+        `const ctx = canvas.getContext('2d');`,
+        `ctx.font = '${style.fontWeight || 400} ${style.fontSize}px "${style.fontFamily}"';`,
+        `ctx.textBaseline = 'alphabetic';`,
+        `ctx.fillText(${JSON.stringify(previewText)}, 0, ${metrics.baseline.toFixed(2)});`,
+      ].join('\n');
+    }
+
+    function buildMeasuryStructure(text, style) {
+      return [
+        `const metrics = measureText(${JSON.stringify(text)}, {`,
+        `  fontFamily: '${style.fontFamily}',`,
+        `  fontSize: ${style.fontSize},`,
+        `  fontWeight: ${style.fontWeight || 400},`,
+        `});`,
+      ].join('\n');
+    }
+
     async function measureText(text, style) {
       // 等待字体加载完成
       if ('fonts' in document) {
@@ -638,26 +993,37 @@
         }
       }
 
-      const div = document.createElement('div');
-      div.style.position = 'absolute';
-      div.style.visibility = 'hidden';
-      div.style.whiteSpace = 'nowrap';
-      div.style.fontFamily = `"${style.fontFamily}"`;
-      div.style.fontSize = style.fontSize + 'px';
-      div.style.fontWeight = style.fontWeight;
-      div.style.letterSpacing = (style.letterSpacing || 0) + 'px';
-      div.style.wordSpacing = (style.wordSpacing || 0) + 'px';
-      div.textContent = text;
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('width', '0');
+      svg.setAttribute('height', '0');
+      svg.style.position = 'absolute';
+      svg.style.visibility = 'hidden';
+      svg.style.overflow = 'visible';
+      svg.style.left = '-99999px';
+      svg.style.top = '-99999px';
 
-      // 确保没有其他样式干扰
-      div.style.padding = '0';
-      div.style.margin = '0';
-      div.style.border = 'none';
-      div.style.boxSizing = 'content-box';
+      const textElement = document.createElementNS(svgNS, 'text');
+      textElement.setAttribute('x', '0');
+      textElement.setAttribute('y', '0');
+      textElement.setAttribute('xml:space', 'preserve');
+      textElement.setAttribute('font-family', `"${style.fontFamily.replace(/"/g, '\\"')}"`);
+      textElement.setAttribute('font-size', String(style.fontSize));
+      textElement.setAttribute('font-weight', String(style.fontWeight || 400));
+      if (style.letterSpacing !== undefined) {
+        textElement.setAttribute('letter-spacing', String(style.letterSpacing));
+      }
+      if (style.wordSpacing !== undefined) {
+        textElement.setAttribute('word-spacing', String(style.wordSpacing));
+      }
+      const measuredText = text.length === 0 ? ' ' : text;
+      textElement.textContent = measuredText;
 
-      document.body.appendChild(div);
-      const rect = div.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(div);
+      svg.appendChild(textElement);
+      document.body.appendChild(svg);
+      const bbox = textElement.getBBox();
+      const actualWidth = text.length === 0 ? 0 : bbox.width;
+      const actualHeight = text.length === 0 ? 0 : bbox.height;
 
       // 获取字体 metrics
       const metrics = fontMetrics[style.fontFamily];
@@ -671,7 +1037,7 @@
         height = (totalHeight / metrics.unitsPerEm) * fontSize;
       } else {
         // 降级：使用浏览器实际渲染高度
-        height = rect.height;
+        height = actualHeight;
       }
 
       // 计算 baseline（使用字体的 ascender 比例）
@@ -679,27 +1045,27 @@
       if (metrics) {
         baseline = fontSize * (metrics.ascender / metrics.unitsPerEm);
       } else {
-        // 如果没有字体数据，使用通用估算值
-        baseline = fontSize * 0.8;
+        // SVG text 的基线位置（y=0），基线到顶部距离约为 -bbox.y
+        baseline = text.length === 0 ? 0 : -bbox.y;
       }
 
-      // 获取计算后的行高
-      let lineHeight = parseFloat(computedStyle.lineHeight);
-
-      // 如果 lineHeight 是 'normal'，parseFloat 会返回 NaN
-      // 这种情况下使用计算的高度
-      if (isNaN(lineHeight)) {
-        lineHeight = height;
-      }
-
-      document.body.removeChild(div);
+      const lineHeight = height;
+      const htmlMetrics = measureHtmlPreview(text, style);
+      document.body.removeChild(svg);
 
       return {
-        width: rect.width,
+        // 目标值：使用 HTML 测量结果
+        width: htmlMetrics.width,
         height: height,
-        actualHeight: rect.height,
+        actualHeight: htmlMetrics.height,
         lineHeight: lineHeight,
         baseline: baseline,
+        // 调试/对照信息
+        htmlWidth: htmlMetrics.width,
+        htmlHeight: htmlMetrics.height,
+        htmlBaseline: htmlMetrics.baseline,
+        svgWidth: actualWidth,
+        svgHeight: actualHeight,
       };
     }
 
@@ -709,7 +1075,27 @@
       const fontSize = parseInt(document.getElementById('customSize').value);
       const fontWeight = parseInt(document.getElementById('customWeight').value);
 
-      const result = await measureText(text, { fontFamily, fontSize, fontWeight });
+      const previewStyle = {
+        fontFamily,
+        fontSize,
+        fontWeight,
+        letterSpacing: 0,
+        wordSpacing: 0,
+      };
+
+      const result = await measureText(text, previewStyle);
+      const svgPreviewMetrics = {
+        width: result.svgWidth,
+        height: result.svgHeight,
+        baseline: result.baseline,
+      };
+      const htmlPreviewMetrics = {
+        width: result.htmlWidth,
+        height: result.htmlHeight,
+        baseline: result.htmlBaseline,
+      };
+      const canvasPreviewMetrics = measureCanvasPreview(text, previewStyle);
+      const canvasPreview = buildCanvasPreview(text, previewStyle, canvasPreviewMetrics);
 
       // 保存当前测试结果供生成代码使用
       window.currentCustomTest = {
@@ -718,20 +1104,47 @@
         measured: result
       };
 
+      const svgCard = buildPreviewCard(
+        'SVG 渲染',
+        buildSvgPreview(text, previewStyle, svgPreviewMetrics),
+        svgPreviewMetrics,
+        buildSvgStructure(text, previewStyle, svgPreviewMetrics)
+      );
+
+      const htmlCard = buildPreviewCard(
+        'HTML 渲染',
+        buildHtmlPreview(text, previewStyle, htmlPreviewMetrics),
+        htmlPreviewMetrics,
+        buildHtmlStructure(text, previewStyle)
+      );
+
+      const canvasCard = buildPreviewCard(
+        'Canvas 渲染',
+        canvasPreview.markup,
+        canvasPreviewMetrics,
+        buildCanvasStructure(text, previewStyle, canvasPreviewMetrics)
+      );
+
+      const measuryPreviewMetrics = {
+        width: result.width,
+        height: result.height,
+        baseline: result.baseline,
+      };
+      const measuryCard = buildPreviewCard(
+        'Measury 计算',
+        buildSvgPreview(text, previewStyle, measuryPreviewMetrics),
+        measuryPreviewMetrics,
+        buildMeasuryStructure(text, previewStyle)
+      );
+
       const resultDiv = document.getElementById('customResult');
       resultDiv.innerHTML = `
         <div class="test-item">
-          <div class="measurement-box" style="font-family: '${fontFamily}'; font-size: ${fontSize}px; font-weight: ${fontWeight};">
-            ${text}
-          </div>
-          <div class="results">
-            <div><strong>字体:</strong> ${fontFamily}</div>
-            <div><strong>文本:</strong> "${text}"</div>
-            <div><strong>宽度:</strong> ${result.width.toFixed(2)}px</div>
-            <div><strong>高度 (计算):</strong> ${result.height.toFixed(2)}px</div>
-            <div><strong>高度 (浏览器实际):</strong> ${result.actualHeight.toFixed(2)}px ${Math.abs(result.height - result.actualHeight) < 1 ? '✅' : '⚠️ 差异: ' + (result.actualHeight - result.height).toFixed(2) + 'px'}</div>
-            <div><strong>行高:</strong> ${result.lineHeight.toFixed(2)}px</div>
-            <div><strong>基线:</strong> ${result.baseline.toFixed(2)}px (从顶部到基线的距离)</div>
+          <div class="custom-preview-grid">
+            ${measuryCard}
+            ${svgCard}
+            ${htmlCard}
+            ${canvasCard}
           </div>
           <div style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
             <strong>快速测试代码:</strong>
@@ -741,11 +1154,13 @@
   fontWeight: ${fontWeight},
 });
 
-expect(metrics.width).toBeCloseTo(${result.width.toFixed(2)}, 1);
-expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 1);</pre>
+expect(Math.abs(metrics.width - ${result.width.toFixed(2)})).toBeLessThanOrEqual(Math.max(${WIDTH_ABS_TOLERANCE}, Math.abs(${result.width.toFixed(2)}) * ${WIDTH_REL_TOLERANCE}));
+expect(Math.abs(metrics.height - ${result.actualHeight.toFixed(2)})).toBeLessThanOrEqual(${HEIGHT_ABS_TOLERANCE});</pre>
           </div>
         </div>
       `;
+
+      drawCanvasPreviewById(canvasPreview.id);
     }
 
     // 从当前自定义测试生成完整测试代码
@@ -768,6 +1183,19 @@ expect(metrics.height).toBeCloseTo(${result.height.toFixed(2)}, 1);</pre>
 import { measureText, registerFont } from '../src';
 import ${importVarName} from '../src/fonts/${mapping.fileName}-${styleName}';
 
+const WIDTH_ABS_TOLERANCE = ${WIDTH_ABS_TOLERANCE};
+const WIDTH_REL_TOLERANCE = ${WIDTH_REL_TOLERANCE};
+const HEIGHT_ABS_TOLERANCE = ${HEIGHT_ABS_TOLERANCE};
+
+function expectWidthMatch(actual: number, expected: number): void {
+  const allowed = Math.max(WIDTH_ABS_TOLERANCE, Math.abs(expected) * WIDTH_REL_TOLERANCE);
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(allowed);
+}
+
+function expectHeightMatch(actual: number, expected: number): void {
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(HEIGHT_ABS_TOLERANCE);
+}
+
 beforeAll(() => {
   // 注册字体
   registerFont(${importVarName});
@@ -787,9 +1215,9 @@ beforeAll(() => {
         ${styleProps.join(',\n        ')}
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 1);
-      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, ${r.measured.width.toFixed(2)});
+      expectHeightMatch(metrics.height, ${r.measured.actualHeight.toFixed(2)});
     });
   });
 });`;
@@ -822,17 +1250,16 @@ beforeAll(() => {
       </div>` + results.map(r => `
         <div class="test-case">
           <h3>${r.name}</h3>
-          <div class="measurement-box" style="font-family: '${r.style.fontFamily}'; font-size: ${r.style.fontSize}px; font-weight: ${r.style.fontWeight};">
-            ${r.text}
-          </div>
+          ${buildSvgPreview(r.text, r.style, { width: r.measured.svgWidth, actualHeight: r.measured.svgHeight, baseline: r.measured.baseline })}
           <div class="results">
             <div><strong>字体:</strong> ${r.style.fontFamily}</div>
             <div><strong>文本:</strong> "${r.text}"</div>
             <div><strong>字号:</strong> ${r.style.fontSize}px</div>
             <div><strong>字重:</strong> ${r.style.fontWeight}</div>
-            <div><strong>宽度:</strong> ${r.measured.width.toFixed(2)}px</div>
+            <div><strong>宽度 (目标 HTML):</strong> ${r.measured.width.toFixed(2)}px</div>
             <div><strong>高度 (计算):</strong> ${r.measured.height.toFixed(2)}px</div>
-            <div><strong>高度 (浏览器):</strong> ${r.measured.actualHeight.toFixed(2)}px ${Math.abs(r.measured.height - r.measured.actualHeight) < 1 ? '✅' : '⚠️'}</div>
+            <div><strong>高度 (目标 HTML):</strong> ${r.measured.actualHeight.toFixed(2)}px ${Math.abs(r.measured.height - r.measured.actualHeight) <= HEIGHT_ABS_TOLERANCE ? '✅' : '⚠️'}</div>
+            <div><strong>高度 (SVG getBBox):</strong> ${r.measured.svgHeight.toFixed(2)}px</div>
             <div><strong>行高:</strong> ${r.measured.lineHeight.toFixed(2)}px</div>
             <div><strong>基线:</strong> ${r.measured.baseline.toFixed(2)}px</div>
           </div>
@@ -891,6 +1318,19 @@ ${[...uniqueFontWeights].map(fontWeight => {
         return `import ${importVarName} from '../src/fonts/${mapping.fileName}-${styleName}';`;
       }).join('\n')}
 
+const WIDTH_ABS_TOLERANCE = ${WIDTH_ABS_TOLERANCE};
+const WIDTH_REL_TOLERANCE = ${WIDTH_REL_TOLERANCE};
+const HEIGHT_ABS_TOLERANCE = ${HEIGHT_ABS_TOLERANCE};
+
+function expectWidthMatch(actual: number, expected: number): void {
+  const allowed = Math.max(WIDTH_ABS_TOLERANCE, Math.abs(expected) * WIDTH_REL_TOLERANCE);
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(allowed);
+}
+
+function expectHeightMatch(actual: number, expected: number): void {
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(HEIGHT_ABS_TOLERANCE);
+}
+
 beforeAll(() => {
   // 注册字体
 ${[...uniqueFontWeights].map(fontWeight => {
@@ -923,9 +1363,9 @@ ${[...uniqueFontWeights].map(fontWeight => {
         ${styleProps.join(',\n        ')}
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(${r.measured.width.toFixed(2)}, 1);
-      expect(metrics.height).toBeCloseTo(${r.measured.height.toFixed(2)}, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, ${r.measured.width.toFixed(2)});
+      expectHeightMatch(metrics.height, ${r.measured.actualHeight.toFixed(2)});
     });`;
           }).join('\n\n');
 

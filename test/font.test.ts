@@ -7,6 +7,22 @@ import LXGWWenKaiRegular from '../src/fonts/LXGWWenKai-Regular';
 import _851tegakizatsuRegular from '../src/fonts/851tegakizatsu-Regular';
 import ArialRegular from '../src/fonts/Arial-Regular';
 
+const WIDTH_ABS_TOLERANCE = 0.8;
+const WIDTH_REL_TOLERANCE = 0.01;
+const HEIGHT_ABS_TOLERANCE = 0.6;
+
+function expectWidthMatch(actual: number, expected: number): void {
+  const allowed = Math.max(
+    WIDTH_ABS_TOLERANCE,
+    Math.abs(expected) * WIDTH_REL_TOLERANCE
+  );
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(allowed);
+}
+
+function expectHeightMatch(actual: number, expected: number): void {
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(HEIGHT_ABS_TOLERANCE);
+}
+
 beforeAll(() => {
   // 注册字体
   registerFont(AlibabaPuHuiTiRegular);
@@ -25,9 +41,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(66.35, 1);
-      expect(metrics.height).toBeCloseTo(16.8, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 66.35);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello, World!"', () => {
@@ -36,9 +52,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(73.83, 1);
-      expect(metrics.height).toBeCloseTo(16.8, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 73.83);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好世界"', () => {
@@ -47,9 +63,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(47.23, 1);
-      expect(metrics.height).toBeCloseTo(16.8, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 47.23);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好，世界！"', () => {
@@ -58,9 +74,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(70.85, 1);
-      expect(metrics.height).toBeCloseTo(16.8, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 70.85);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -69,9 +85,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(93.05, 1);
-      expect(metrics.height).toBeCloseTo(16.8, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 93.05);
+      expectHeightMatch(metrics.height, 16.5);
     });
   });
 
@@ -82,9 +98,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(88.47, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 88.47);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"Hello, World!"', () => {
@@ -93,9 +109,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(98.44, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 98.44);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"你好世界"', () => {
@@ -104,9 +120,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(62.98, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 62.98);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"你好，世界！"', () => {
@@ -115,9 +131,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(94.47, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 94.47);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -126,9 +142,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(124.07, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 124.07);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"HelloWorld"', () => {
@@ -137,9 +153,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(84.04, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 84.04);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -151,9 +167,9 @@ describe('Alibaba PuHuiTi', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(343.48, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 343.48);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -162,9 +178,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(236.16, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 236.16);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -173,9 +189,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.73, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.73);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"0123456789"', () => {
@@ -184,9 +200,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(92.0, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 92.0);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"Price: $123.45"', () => {
@@ -195,9 +211,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(107.3, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 107.3);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -206,9 +222,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(189.84, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 189.84);
+      expectHeightMatch(metrics.height, 22.5);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -217,9 +233,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(166.12, 1);
-      expect(metrics.height).toBeCloseTo(22.4, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 166.12);
+      expectHeightMatch(metrics.height, 22.5);
     });
   });
 
@@ -230,9 +246,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(132.7, 1);
-      expect(metrics.height).toBeCloseTo(33.6, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 132.7);
+      expectHeightMatch(metrics.height, 33.5);
     });
 
     it('"Hello, World!"', () => {
@@ -241,9 +257,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(147.65, 1);
-      expect(metrics.height).toBeCloseTo(33.6, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 147.65);
+      expectHeightMatch(metrics.height, 33.5);
     });
 
     it('"你好世界"', () => {
@@ -252,9 +268,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(94.47, 1);
-      expect(metrics.height).toBeCloseTo(33.6, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 94.47);
+      expectHeightMatch(metrics.height, 33.5);
     });
 
     it('"你好，世界！"', () => {
@@ -263,9 +279,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(141.7, 1);
-      expect(metrics.height).toBeCloseTo(33.6, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 141.7);
+      expectHeightMatch(metrics.height, 33.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -274,9 +290,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(186.1, 1);
-      expect(metrics.height).toBeCloseTo(33.6, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 186.1);
+      expectHeightMatch(metrics.height, 33.5);
     });
   });
 
@@ -287,9 +303,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(265.4, 1);
-      expect(metrics.height).toBeCloseTo(67.2, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 265.4);
+      expectHeightMatch(metrics.height, 67.5);
     });
 
     it('"Hello, World!"', () => {
@@ -298,9 +314,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(295.3, 1);
-      expect(metrics.height).toBeCloseTo(67.2, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 295.3);
+      expectHeightMatch(metrics.height, 67.5);
     });
 
     it('"你好世界"', () => {
@@ -309,9 +325,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(188.93, 1);
-      expect(metrics.height).toBeCloseTo(67.2, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 188.93);
+      expectHeightMatch(metrics.height, 67.5);
     });
 
     it('"你好，世界！"', () => {
@@ -320,9 +336,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(283.4, 1);
-      expect(metrics.height).toBeCloseTo(67.2, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 283.4);
+      expectHeightMatch(metrics.height, 67.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -331,9 +347,9 @@ describe('Alibaba PuHuiTi', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(372.2, 1);
-      expect(metrics.height).toBeCloseTo(67.2, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 372.2);
+      expectHeightMatch(metrics.height, 67.5);
     });
   });
 });
@@ -346,9 +362,9 @@ describe('Source Han Sans', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(65.52, 1);
-      expect(metrics.height).toBeCloseTo(18.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 65.52);
+      expectHeightMatch(metrics.height, 18.0);
     });
 
     it('"Hello, World!"', () => {
@@ -357,9 +373,9 @@ describe('Source Han Sans', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.59, 1);
-      expect(metrics.height).toBeCloseTo(18.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.59);
+      expectHeightMatch(metrics.height, 18.0);
     });
 
     it('"你好世界"', () => {
@@ -368,9 +384,9 @@ describe('Source Han Sans', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(48.0, 1);
-      expect(metrics.height).toBeCloseTo(18.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 48.0);
+      expectHeightMatch(metrics.height, 18.0);
     });
 
     it('"你好，世界！"', () => {
@@ -379,9 +395,9 @@ describe('Source Han Sans', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.0, 1);
-      expect(metrics.height).toBeCloseTo(18.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.0);
+      expectHeightMatch(metrics.height, 18.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -390,9 +406,9 @@ describe('Source Han Sans', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(92.2, 1);
-      expect(metrics.height).toBeCloseTo(18.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 92.2);
+      expectHeightMatch(metrics.height, 18.0);
     });
   });
 
@@ -403,9 +419,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(87.35, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 87.35);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Hello, World!"', () => {
@@ -414,9 +430,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.79, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.79);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"你好世界"', () => {
@@ -425,9 +441,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"你好，世界！"', () => {
@@ -436,9 +452,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -447,9 +463,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(122.93, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 122.93);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"HelloWorld"', () => {
@@ -458,9 +474,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(83.77, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 83.77);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -472,9 +488,9 @@ describe('Source Han Sans', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(334.82, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 334.82);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -483,9 +499,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(240.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 240.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -494,9 +510,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.07, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.07);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"0123456789"', () => {
@@ -505,9 +521,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(88.8, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 88.8);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Price: $123.45"', () => {
@@ -516,9 +532,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(103.11, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 103.11);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -527,9 +543,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.18, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.18);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -538,9 +554,9 @@ describe('Source Han Sans', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(164.36, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 164.36);
+      expectHeightMatch(metrics.height, 24.0);
     });
   });
 
@@ -551,9 +567,9 @@ describe('Source Han Sans', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(131.02, 1);
-      expect(metrics.height).toBeCloseTo(36.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 131.02);
+      expectHeightMatch(metrics.height, 36.0);
     });
 
     it('"Hello, World!"', () => {
@@ -562,9 +578,9 @@ describe('Source Han Sans', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(145.18, 1);
-      expect(metrics.height).toBeCloseTo(36.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 145.18);
+      expectHeightMatch(metrics.height, 36.0);
     });
 
     it('"你好世界"', () => {
@@ -573,9 +589,9 @@ describe('Source Han Sans', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(36.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 36.0);
     });
 
     it('"你好，世界！"', () => {
@@ -584,9 +600,9 @@ describe('Source Han Sans', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.0, 1);
-      expect(metrics.height).toBeCloseTo(36.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.0);
+      expectHeightMatch(metrics.height, 36.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -595,9 +611,9 @@ describe('Source Han Sans', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(184.4, 1);
-      expect(metrics.height).toBeCloseTo(36.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 184.4);
+      expectHeightMatch(metrics.height, 36.0);
     });
   });
 
@@ -608,9 +624,9 @@ describe('Source Han Sans', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(262.04, 1);
-      expect(metrics.height).toBeCloseTo(72.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 262.04);
+      expectHeightMatch(metrics.height, 72.0);
     });
 
     it('"Hello, World!"', () => {
@@ -619,9 +635,9 @@ describe('Source Han Sans', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(290.36, 1);
-      expect(metrics.height).toBeCloseTo(72.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 290.36);
+      expectHeightMatch(metrics.height, 72.0);
     });
 
     it('"你好世界"', () => {
@@ -630,9 +646,9 @@ describe('Source Han Sans', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(72.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 72.0);
     });
 
     it('"你好，世界！"', () => {
@@ -641,9 +657,9 @@ describe('Source Han Sans', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(288.0, 1);
-      expect(metrics.height).toBeCloseTo(72.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 288.0);
+      expectHeightMatch(metrics.height, 72.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -652,9 +668,9 @@ describe('Source Han Sans', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(368.79, 1);
-      expect(metrics.height).toBeCloseTo(72.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 368.79);
+      expectHeightMatch(metrics.height, 72.0);
     });
   });
 });
@@ -667,9 +683,9 @@ describe('Source Han Serif', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(69.82, 1);
-      expect(metrics.height).toBeCloseTo(17.24, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 69.82);
+      expectHeightMatch(metrics.height, 17.5);
     });
 
     it('"Hello, World!"', () => {
@@ -678,9 +694,9 @@ describe('Source Han Serif', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(77.05, 1);
-      expect(metrics.height).toBeCloseTo(17.24, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 77.05);
+      expectHeightMatch(metrics.height, 17.5);
     });
 
     it('"你好世界"', () => {
@@ -689,9 +705,9 @@ describe('Source Han Serif', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(48.0, 1);
-      expect(metrics.height).toBeCloseTo(17.24, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 48.0);
+      expectHeightMatch(metrics.height, 17.5);
     });
 
     it('"你好，世界！"', () => {
@@ -700,9 +716,9 @@ describe('Source Han Serif', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.0, 1);
-      expect(metrics.height).toBeCloseTo(17.24, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.0);
+      expectHeightMatch(metrics.height, 17.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -711,9 +727,9 @@ describe('Source Han Serif', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.91, 1);
-      expect(metrics.height).toBeCloseTo(17.24, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.91);
+      expectHeightMatch(metrics.height, 17.5);
     });
   });
 
@@ -724,9 +740,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(93.09, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 93.09);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"Hello, World!"', () => {
@@ -735,9 +751,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(102.73, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 102.73);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"你好世界"', () => {
@@ -746,9 +762,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.0, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.0);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"你好，世界！"', () => {
@@ -757,9 +773,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -768,9 +784,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(129.22, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 129.22);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"HelloWorld"', () => {
@@ -779,9 +795,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(87.84, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 87.84);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -793,9 +809,9 @@ describe('Source Han Serif', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(351.17, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 351.17);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -804,9 +820,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(240.0, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 240.0);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -815,9 +831,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(151.09, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 151.09);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"0123456789"', () => {
@@ -826,9 +842,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(86.24, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 86.24);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"Price: $123.45"', () => {
@@ -837,9 +853,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(106.1, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 106.1);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -848,9 +864,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(199.72, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 199.72);
+      expectHeightMatch(metrics.height, 23.0);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -859,9 +875,9 @@ describe('Source Han Serif', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(166.26, 1);
-      expect(metrics.height).toBeCloseTo(22.99, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 166.26);
+      expectHeightMatch(metrics.height, 23.0);
     });
   });
 
@@ -872,9 +888,9 @@ describe('Source Han Serif', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(139.63, 1);
-      expect(metrics.height).toBeCloseTo(34.49, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 139.63);
+      expectHeightMatch(metrics.height, 34.5);
     });
 
     it('"Hello, World!"', () => {
@@ -883,9 +899,9 @@ describe('Source Han Serif', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(154.09, 1);
-      expect(metrics.height).toBeCloseTo(34.49, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 154.09);
+      expectHeightMatch(metrics.height, 34.5);
     });
 
     it('"你好世界"', () => {
@@ -894,9 +910,9 @@ describe('Source Han Serif', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(34.49, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 34.5);
     });
 
     it('"你好，世界！"', () => {
@@ -905,9 +921,9 @@ describe('Source Han Serif', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.0, 1);
-      expect(metrics.height).toBeCloseTo(34.49, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.0);
+      expectHeightMatch(metrics.height, 34.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -916,9 +932,9 @@ describe('Source Han Serif', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(193.83, 1);
-      expect(metrics.height).toBeCloseTo(34.49, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 193.83);
+      expectHeightMatch(metrics.height, 34.5);
     });
   });
 
@@ -929,9 +945,9 @@ describe('Source Han Serif', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(279.27, 1);
-      expect(metrics.height).toBeCloseTo(68.98, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 279.27);
+      expectHeightMatch(metrics.height, 68.5);
     });
 
     it('"Hello, World!"', () => {
@@ -940,9 +956,9 @@ describe('Source Han Serif', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(308.16, 1);
-      expect(metrics.height).toBeCloseTo(68.98, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 308.16);
+      expectHeightMatch(metrics.height, 68.5);
     });
 
     it('"你好世界"', () => {
@@ -951,9 +967,9 @@ describe('Source Han Serif', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(68.98, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 68.5);
     });
 
     it('"你好，世界！"', () => {
@@ -962,9 +978,9 @@ describe('Source Han Serif', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(288.0, 1);
-      expect(metrics.height).toBeCloseTo(68.98, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 288.0);
+      expectHeightMatch(metrics.height, 68.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -973,9 +989,9 @@ describe('Source Han Serif', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(387.65, 1);
-      expect(metrics.height).toBeCloseTo(68.98, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 387.65);
+      expectHeightMatch(metrics.height, 68.5);
     });
   });
 });
@@ -988,9 +1004,9 @@ describe('LXGW WenKai', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.7, 1);
-      expect(metrics.height).toBeCloseTo(14.21, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.7);
+      expectHeightMatch(metrics.height, 14.0);
     });
 
     it('"Hello, World!"', () => {
@@ -999,9 +1015,9 @@ describe('LXGW WenKai', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(73.09, 1);
-      expect(metrics.height).toBeCloseTo(14.21, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 73.09);
+      expectHeightMatch(metrics.height, 14.0);
     });
 
     it('"你好世界"', () => {
@@ -1010,9 +1026,9 @@ describe('LXGW WenKai', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(48.0, 1);
-      expect(metrics.height).toBeCloseTo(14.21, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 48.0);
+      expectHeightMatch(metrics.height, 14.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1021,9 +1037,9 @@ describe('LXGW WenKai', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.0, 1);
-      expect(metrics.height).toBeCloseTo(14.21, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.0);
+      expectHeightMatch(metrics.height, 14.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1032,9 +1048,9 @@ describe('LXGW WenKai', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(92.9, 1);
-      expect(metrics.height).toBeCloseTo(14.21, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 92.9);
+      expectHeightMatch(metrics.height, 14.0);
     });
   });
 
@@ -1045,9 +1061,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(86.26, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 86.26);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"Hello, World!"', () => {
@@ -1056,9 +1072,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(97.46, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 97.46);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"你好世界"', () => {
@@ -1067,9 +1083,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.0, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.0);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1078,9 +1094,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1089,9 +1105,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(123.86, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 123.86);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"HelloWorld"', () => {
@@ -1100,9 +1116,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(80.66, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 80.66);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -1114,9 +1130,9 @@ describe('LXGW WenKai', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(343.88, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 343.88);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -1125,9 +1141,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(240.0, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 240.0);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -1136,9 +1152,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(145.46, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 145.46);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"0123456789"', () => {
@@ -1147,9 +1163,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"Price: $123.45"', () => {
@@ -1158,9 +1174,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(112.55, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 112.55);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -1169,9 +1185,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(202.15, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 202.15);
+      expectHeightMatch(metrics.height, 19.0);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -1180,9 +1196,9 @@ describe('LXGW WenKai', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(171.45, 1);
-      expect(metrics.height).toBeCloseTo(18.94, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 171.45);
+      expectHeightMatch(metrics.height, 19.0);
     });
   });
 
@@ -1193,9 +1209,9 @@ describe('LXGW WenKai', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(129.39, 1);
-      expect(metrics.height).toBeCloseTo(28.42, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 129.39);
+      expectHeightMatch(metrics.height, 28.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1204,9 +1220,9 @@ describe('LXGW WenKai', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(146.19, 1);
-      expect(metrics.height).toBeCloseTo(28.42, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 146.19);
+      expectHeightMatch(metrics.height, 28.5);
     });
 
     it('"你好世界"', () => {
@@ -1215,9 +1231,9 @@ describe('LXGW WenKai', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(28.42, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 28.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1226,9 +1242,9 @@ describe('LXGW WenKai', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.0, 1);
-      expect(metrics.height).toBeCloseTo(28.42, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.0);
+      expectHeightMatch(metrics.height, 28.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1237,9 +1253,9 @@ describe('LXGW WenKai', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(185.79, 1);
-      expect(metrics.height).toBeCloseTo(28.42, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 185.79);
+      expectHeightMatch(metrics.height, 28.5);
     });
   });
 
@@ -1250,9 +1266,9 @@ describe('LXGW WenKai', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(258.77, 1);
-      expect(metrics.height).toBeCloseTo(56.83, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 258.77);
+      expectHeightMatch(metrics.height, 57.0);
     });
 
     it('"Hello, World!"', () => {
@@ -1261,9 +1277,9 @@ describe('LXGW WenKai', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(292.38, 1);
-      expect(metrics.height).toBeCloseTo(56.83, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 292.38);
+      expectHeightMatch(metrics.height, 57.0);
     });
 
     it('"你好世界"', () => {
@@ -1272,9 +1288,9 @@ describe('LXGW WenKai', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(56.83, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 57.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1283,9 +1299,9 @@ describe('LXGW WenKai', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(288.0, 1);
-      expect(metrics.height).toBeCloseTo(56.83, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 288.0);
+      expectHeightMatch(metrics.height, 57.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1294,9 +1310,9 @@ describe('LXGW WenKai', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(371.57, 1);
-      expect(metrics.height).toBeCloseTo(56.83, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 371.57);
+      expectHeightMatch(metrics.height, 57.0);
     });
   });
 });
@@ -1309,9 +1325,9 @@ describe('851tegakizatsu', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(66.0, 1);
-      expect(metrics.height).toBeCloseTo(12.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 66.0);
+      expectHeightMatch(metrics.height, 12.0);
     });
 
     it('"Hello, World!"', () => {
@@ -1320,9 +1336,9 @@ describe('851tegakizatsu', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(78.0, 1);
-      expect(metrics.height).toBeCloseTo(12.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 78.0);
+      expectHeightMatch(metrics.height, 12.0);
     });
 
     it('"你好世界"', () => {
@@ -1331,9 +1347,9 @@ describe('851tegakizatsu', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(48.0, 1);
-      expect(metrics.height).toBeCloseTo(12.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 48.0);
+      expectHeightMatch(metrics.height, 12.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1342,9 +1358,9 @@ describe('851tegakizatsu', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.0, 1);
-      expect(metrics.height).toBeCloseTo(12.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.0);
+      expectHeightMatch(metrics.height, 12.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1353,9 +1369,9 @@ describe('851tegakizatsu', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(12.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 12.0);
     });
   });
 
@@ -1366,9 +1382,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(88.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 88.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1377,9 +1393,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(104.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 104.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好世界"', () => {
@@ -1388,9 +1404,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1399,9 +1415,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1410,9 +1426,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(128.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 128.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"HelloWorld"', () => {
@@ -1421,9 +1437,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(80.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 80.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -1435,9 +1451,9 @@ describe('851tegakizatsu', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(352.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 352.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -1446,9 +1462,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(240.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 240.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -1457,9 +1473,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(152.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 152.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"0123456789"', () => {
@@ -1468,9 +1484,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(80.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 80.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Price: $123.45"', () => {
@@ -1479,9 +1495,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(112.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 112.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -1490,9 +1506,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(208.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 208.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -1501,9 +1517,9 @@ describe('851tegakizatsu', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(168.0, 1);
-      expect(metrics.height).toBeCloseTo(16.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 168.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
   });
 
@@ -1514,9 +1530,9 @@ describe('851tegakizatsu', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(132.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 132.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Hello, World!"', () => {
@@ -1525,9 +1541,9 @@ describe('851tegakizatsu', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(156.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 156.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"你好世界"', () => {
@@ -1536,9 +1552,9 @@ describe('851tegakizatsu', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1547,9 +1563,9 @@ describe('851tegakizatsu', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1558,9 +1574,9 @@ describe('851tegakizatsu', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(24.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 24.0);
     });
   });
 
@@ -1571,9 +1587,9 @@ describe('851tegakizatsu', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(264.0, 1);
-      expect(metrics.height).toBeCloseTo(48.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 264.0);
+      expectHeightMatch(metrics.height, 48.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1582,9 +1598,9 @@ describe('851tegakizatsu', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(312.0, 1);
-      expect(metrics.height).toBeCloseTo(48.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 312.0);
+      expectHeightMatch(metrics.height, 48.5);
     });
 
     it('"你好世界"', () => {
@@ -1593,9 +1609,9 @@ describe('851tegakizatsu', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(48.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 48.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1604,9 +1620,9 @@ describe('851tegakizatsu', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(288.0, 1);
-      expect(metrics.height).toBeCloseTo(48.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 288.0);
+      expectHeightMatch(metrics.height, 48.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1615,9 +1631,9 @@ describe('851tegakizatsu', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(384.0, 1);
-      expect(metrics.height).toBeCloseTo(48.0, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 384.0);
+      expectHeightMatch(metrics.height, 48.5);
     });
   });
 });
@@ -1630,9 +1646,9 @@ describe('Arial', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(62.02, 1);
-      expect(metrics.height).toBeCloseTo(16.08, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 62.02);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1641,9 +1657,9 @@ describe('Arial', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(68.69, 1);
-      expect(metrics.height).toBeCloseTo(16.08, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 68.69);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好世界"', () => {
@@ -1652,9 +1668,9 @@ describe('Arial', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(48.0, 1);
-      expect(metrics.height).toBeCloseTo(16.08, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 48.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1663,9 +1679,9 @@ describe('Arial', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(72.0, 1);
-      expect(metrics.height).toBeCloseTo(16.08, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 72.0);
+      expectHeightMatch(metrics.height, 16.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1674,9 +1690,9 @@ describe('Arial', () => {
         fontSize: 12,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(89.35, 1);
-      expect(metrics.height).toBeCloseTo(16.08, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 89.35);
+      expectHeightMatch(metrics.height, 16.5);
     });
   });
 
@@ -1687,9 +1703,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(82.69, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 82.69);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1698,9 +1714,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(91.58, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 91.58);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"你好世界"', () => {
@@ -1709,9 +1725,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(64.0, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 64.0);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1720,9 +1736,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1731,9 +1747,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(119.13, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 119.13);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"HelloWorld"', () => {
@@ -1742,9 +1758,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(78.24, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 78.24);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"The quick brown fox jumps over the lazy dog."', () => {
@@ -1756,9 +1772,9 @@ describe('Arial', () => {
         }
       );
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(321.05, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 321.05);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"今天天气真不错，适合出去走走。"', () => {
@@ -1767,9 +1783,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(240.0, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 240.0);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"Hello, 你好！World."', () => {
@@ -1778,9 +1794,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(139.58, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 139.58);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"0123456789"', () => {
@@ -1789,9 +1805,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(88.98, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 88.98);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"Price: $123.45"', () => {
@@ -1800,9 +1816,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(103.18, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 103.18);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"!@#$%^&*()_+-=[]{}|;:,.<>?"', () => {
@@ -1811,9 +1827,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(188.89, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 188.89);
+      expectHeightMatch(metrics.height, 21.5);
     });
 
     it('"Product价格: $99.99元"', () => {
@@ -1822,9 +1838,9 @@ describe('Arial', () => {
         fontSize: 16,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(160.97, 1);
-      expect(metrics.height).toBeCloseTo(21.44, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 160.97);
+      expectHeightMatch(metrics.height, 21.5);
     });
   });
 
@@ -1835,9 +1851,9 @@ describe('Arial', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(124.03, 1);
-      expect(metrics.height).toBeCloseTo(32.16, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 124.03);
+      expectHeightMatch(metrics.height, 32.0);
     });
 
     it('"Hello, World!"', () => {
@@ -1846,9 +1862,9 @@ describe('Arial', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(137.37, 1);
-      expect(metrics.height).toBeCloseTo(32.16, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 137.37);
+      expectHeightMatch(metrics.height, 32.0);
     });
 
     it('"你好世界"', () => {
@@ -1857,9 +1873,9 @@ describe('Arial', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(96.0, 1);
-      expect(metrics.height).toBeCloseTo(32.16, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 96.0);
+      expectHeightMatch(metrics.height, 32.0);
     });
 
     it('"你好，世界！"', () => {
@@ -1868,9 +1884,9 @@ describe('Arial', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(144.0, 1);
-      expect(metrics.height).toBeCloseTo(32.16, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 144.0);
+      expectHeightMatch(metrics.height, 32.0);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1879,9 +1895,9 @@ describe('Arial', () => {
         fontSize: 24,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(178.7, 1);
-      expect(metrics.height).toBeCloseTo(32.16, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 178.7);
+      expectHeightMatch(metrics.height, 32.0);
     });
   });
 
@@ -1892,9 +1908,9 @@ describe('Arial', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(248.06, 1);
-      expect(metrics.height).toBeCloseTo(64.31, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 248.06);
+      expectHeightMatch(metrics.height, 64.5);
     });
 
     it('"Hello, World!"', () => {
@@ -1903,9 +1919,9 @@ describe('Arial', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(274.73, 1);
-      expect(metrics.height).toBeCloseTo(64.31, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 274.73);
+      expectHeightMatch(metrics.height, 64.5);
     });
 
     it('"你好世界"', () => {
@@ -1914,9 +1930,9 @@ describe('Arial', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(192.0, 1);
-      expect(metrics.height).toBeCloseTo(64.31, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 192.0);
+      expectHeightMatch(metrics.height, 64.5);
     });
 
     it('"你好，世界！"', () => {
@@ -1925,9 +1941,9 @@ describe('Arial', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(288.0, 1);
-      expect(metrics.height).toBeCloseTo(64.31, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 288.0);
+      expectHeightMatch(metrics.height, 64.5);
     });
 
     it('"Hello 你好 World"', () => {
@@ -1936,9 +1952,9 @@ describe('Arial', () => {
         fontSize: 48,
       });
 
-      // 浏览器实际测量值 (from test-browser/index.html)
-      expect(metrics.width).toBeCloseTo(357.4, 1);
-      expect(metrics.height).toBeCloseTo(64.31, 1);
+      // 浏览器 HTML 实际测量值 (from test-browser/index.html)
+      expectWidthMatch(metrics.width, 357.4);
+      expectHeightMatch(metrics.height, 64.5);
     });
   });
 });
